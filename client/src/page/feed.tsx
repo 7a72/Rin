@@ -2,7 +2,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import ReactModal from "react-modal";
-import Popup from "reactjs-popup";
 import { Link, useLocation } from "wouter";
 import { useAlert, useConfirm } from "../components/dialog";
 import { HashTag } from "../components/hashtag";
@@ -16,7 +15,6 @@ import { siteName } from "../utils/constants";
 import { timeago } from "../utils/timeago";
 import { Button } from "../components/button";
 import { Tips } from "../components/tips";
-import { useLoginModal } from "../hooks/useLoginModal";
 import mermaid from "mermaid";
 
 type Feed = {
@@ -296,7 +294,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                   </div>
                 </div>
               </article>
-              {feed && <Comments id={`${feed.id}`} />}
+              {feed && <TwikooComments envId={`${process.env.twikooEnvID}`} />}
               <div className="h-16" />
             </main>
             <div className="w-80 hidden lg:block relative">
@@ -360,234 +358,69 @@ export function TOCHeader({ TOC }: { TOC: () => JSX.Element }) {
   );
 }
 
-function CommentInput({
-  id,
-  onRefresh,
-}: {
-  id: string;
-  onRefresh: () => void;
-}) {
-  const { t } = useTranslation();
-  const [content, setContent] = useState("");
-  const [error, setError] = useState("");
-  const { showAlert, AlertUI } = useAlert();
-  const profile = useContext(ProfileContext);
-  const { LoginModal, setIsOpened } = useLoginModal()
-  function errorHumanize(error: string) {
-    if (error === "Unauthorized") return t("login.required");
-    else if (error === "Content is required") return t("comment.empty");
-    return error;
-  }
-  function submit() {
-    if (!profile) {
-      setIsOpened(true)
-      return;
+
+function TwikooComments({ envId }: { envId: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadComments = () => {
+    if (scriptLoaded) return;
+
+    try {
+      const twikooScript = document.createElement("script");
+      twikooScript.src = "https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.min.js";
+      twikooScript.defer = true;
+      twikooScript.onload = () => {
+        try {
+          (window as any).twikoo.init({
+            envId: envId,
+            el: "#twikoo",
+            path: window.location.pathname.replace(/\/$/, ""),
+          });
+          setScriptLoaded(true);
+        } catch (initError) {
+          setError("Failed to initialize comments.");
+        }
+      };
+
+      twikooScript.onerror = () => {
+        setError("Failed to load the Twikoo script.");
+      };
+
+      document.body.appendChild(twikooScript);
+    } catch (e) {
+      setError("An unexpected error occurred.");
     }
-    client.feed
-      .comment({ feed: id })
-      .post(
-        { content },
-        {
-          headers: headersWithAuth(),
-        }
-      )
-      .then(({ error }) => {
-        if (error) {
-          setError(errorHumanize(error.value as string));
-        } else {
-          setContent("");
-          setError("");
-          showAlert(t("comment.success"), () => {
-            onRefresh();
-          });
-        }
-      });
-  }
-  return (
-    <div className="w-full rounded-2xl bg-w t-primary m-2 p-6 items-end flex flex-col">
-      <div className="flex flex-col w-full items-start mb-4">
-        <label htmlFor="comment">{t("comment.title")}</label>
-      </div>
-      {profile ? (<>
-        <textarea
-          id="comment"
-          placeholder={t("comment.placeholder.title")}
-          className="bg-w w-full h-24 rounded-lg"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <button
-          className="mt-4 bg-theme text-white px-4 py-2 rounded-full"
-          onClick={submit}
-        >
-          {t("comment.submit")}
-        </button>
-      </>) : (
-        <div className="flex flex-row w-full items-center justify-center space-x-2 py-12">
-          <button
-            className="mt-2 bg-theme text-white px-4 py-2 rounded-full"
-            onClick={() => setIsOpened(true)}
-          >
-            {t("login.required")}
-          </button>
-        </div>
-      )}
-      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      <AlertUI />
-      <LoginModal />
-    </div>
-  );
-}
-
-type Comment = {
-  id: number;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  user: {
-    id: number;
-    username: string;
-    avatar: string | null;
-    permission: number | null;
   };
-};
 
-function Comments({ id }: { id: string }) {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [error, setError] = useState<string>();
-  const ref = useRef("");
-  const { t } = useTranslation();
-
-  function loadComments() {
-    client.feed
-      .comment({ feed: id })
-      .get({
-        headers: headersWithAuth(),
-      })
-      .then(({ data, error }) => {
-        if (error) {
-          setError(error.value as string);
-        } else if (data && Array.isArray(data)) {
-          setComments(data);
-        }
-      });
-  }
   useEffect(() => {
-    if (ref.current == id) return;
-    loadComments();
-    ref.current = id;
-  }, [id]);
-  return (
-    <>
-      <div className="m-2 flex flex-col justify-center items-center">
-        <CommentInput id={id} onRefresh={loadComments} />
-        {error && (
-          <>
-            <div className="flex flex-col wauto rounded-2xl bg-w t-primary m-2 p-6 items-center justify-center">
-              <h1 className="text-xl font-bold t-primary">{error}</h1>
-              <button
-                className="mt-2 bg-theme text-white px-4 py-2 rounded-full"
-                onClick={loadComments}
-              >
-                {t("reload")}
-              </button>
-            </div>
-          </>
-        )}
-        {comments.length > 0 && (
-          <div className="w-full">
-            {comments.map((comment) => (
-              <CommentItem
-                key={comment.id}
-                comment={comment}
-                onRefresh={loadComments}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
+    return () => {
+      const script = document.querySelector('script[src="https://cdn.jsdelivr.net/npm/twikoo@1.6.39/dist/twikoo.min.js"]');
+      if (script) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
 
-function CommentItem({
-  comment,
-  onRefresh,
-}: {
-  comment: Comment;
-  onRefresh: () => void;
-}) {
-  const { showConfirm, ConfirmUI } = useConfirm();
-  const { showAlert, AlertUI } = useAlert();
-  const { t } = useTranslation();
-  const profile = useContext(ProfileContext);
-  function deleteComment() {
-    showConfirm(
-      t("delete.comment.title"),
-      t("delete.comment.confirm"),
-      async () => {
-        client
-          .comment({ id: comment.id })
-          .delete(null, {
-            headers: headersWithAuth(),
-          })
-          .then(({ error }) => {
-            if (error) {
-              showAlert(error.value as string);
-            } else {
-              showAlert(t("delete.success"), () => {
-                onRefresh();
-              });
-            }
-          });
-      })
-  }
   return (
-    <div className="flex flex-row items-start rounded-xl mt-2">
-      <img
-        src={comment.user.avatar || ""}
-        className="w-8 h-8 rounded-full mt-4"
-      />
-      <div className="flex flex-col flex-1 w-0 ml-2 bg-w rounded-xl p-4">
-        <div className="flex flex-row">
-          <span className="t-primary text-base font-bold">
-            {comment.user.username}
-          </span>
-          <div className="flex-1 w-0" />
-          <span
-            title={new Date(comment.createdAt).toLocaleString()}
-            className="text-gray-400 text-sm"
-          >
-            {timeago(comment.createdAt)}
-          </span>
-        </div>
-        <p className="t-primary break-words">{comment.content}</p>
-        <div className="flex flex-row justify-end">
-          {(profile?.permission || profile?.id == comment.user.id) && (
-            <Popup
-              arrow={false}
-              trigger={
-                <button className="px-2 py bg-secondary rounded-full">
-                  <i className="ri-more-fill t-secondary"></i>
-                </button>
-              }
-              position="left center"
-            >
-              <div className="flex flex-row self-end mr-2">
-                <button
-                  onClick={deleteComment}
-                  aria-label={t("delete.comment.title")}
-                  className="px-2 py bg-secondary rounded-full"
-                >
-                  <i className="ri-delete-bin-2-line t-secondary"></i>
-                </button>
-              </div>
-            </Popup>
-          )}
-        </div>
-      </div>
-      <ConfirmUI />
-      <AlertUI />
+    <div className="flex flex-col w-auto rounded-2xl bg-w t-primary m-2 p-6 items-center justify-center">
+      {!loaded ? (
+        <button
+          onClick={() => {
+            loadComments();
+            setLoaded(true);
+          }}
+          className="mt-4 bg-theme text-white px-4 py-2 rounded-full w-full"
+        >
+          加载评论
+        </button>
+      ) : (
+        <div id="twikoo" className="m-2 w-full"></div>
+      )}
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 }
+
+
