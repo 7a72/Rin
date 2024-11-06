@@ -79,7 +79,6 @@ function App() {
               <TimelinePage />
             </RouteMe>
 
-
             <RouteMe path="/friends">
               <FriendsPage />
             </RouteMe>
@@ -104,7 +103,6 @@ function App() {
               <Settings />
             </RouteMe>
 
-
             <RouteMe path="/writing" paddingClassName='mx-4'>
               <WritingPage />
             </RouteMe>
@@ -125,6 +123,12 @@ function App() {
             <RouteWithIndex path="/feed/:id">
               {(params, TOC, clean) => {
                 return (<FeedPage id={params.id || ""} TOC={TOC} clean={clean} />)
+              }}
+            </RouteWithIndex>
+
+            <RouteWithIndex path="/posts/:alias">
+              {(params, TOC, clean) => {
+                return (<FeedPage id={params.alias || ""} TOC={TOC} clean={clean} />)
               }}
             </RouteWithIndex>
 

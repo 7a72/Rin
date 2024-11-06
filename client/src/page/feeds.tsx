@@ -99,8 +99,8 @@ export function FeedsPage() {
                     </div>
                     <Waiting for={status === 'idle'}>
                         <div className="wauto flex flex-col ani-show">
-                            {feeds[listState].data.map(({ id, ...feed }: any) => (
-                                <FeedCard key={id} id={id} {...feed} />
+                            {feeds[listState].data.map(({ id, alias, ...feed }: any) => (
+                                <FeedCard key={id} id={id} alias={alias} {...feed} />
                             ))}
                         </div>
                         <div className="wauto flex flex-row items-center mt-4 ani-show">

@@ -3,18 +3,19 @@ import { useTranslation } from "react-i18next";
 import { timeago } from "../utils/timeago";
 import { HashTag } from "./hashtag";
 import { useMemo } from "react";
-export function FeedCard({ id, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt }:
+export function FeedCard({ id, alias, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt }:
     {
-        id: string, avatar?: string,
+        id: string, alias?: string, avatar?: string,
         draft?: number, listed?: number, top?: number,
         title: string, summary: string,
         hashtags: { id: number, name: string }[],
         createdAt: Date, updatedAt: Date
     }) {
     const { t } = useTranslation()
+    const postLink = alias ? `/posts/${alias}` : `/feed/${id}`;
     return useMemo(() => (
         <>
-            <Link href={`/feed/${id}`} target="_blank" className="w-full rounded-2xl bg-w my-2 p-6 duration-300 bg-button">
+            <Link href={postLink} target="_blank" className="w-full rounded-2xl bg-w my-2 p-6 duration-300 bg-button">
                 {avatar &&
                     <div className="flex flex-row items-center mb-2 rounded-xl overflow-clip">
                         <img src={avatar} alt=""
