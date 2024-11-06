@@ -96,6 +96,7 @@ export function FeedService() {
                         columns: {
                             id: true,
                             title: true,
+                            alias: true,
                             createdAt: true,
                         },
                         orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
