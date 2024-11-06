@@ -83,11 +83,11 @@ function App() {
               <FriendsPage />
             </RouteMe>
 
-            <RouteMe path="/hashtags">
+            <RouteMe path="/tags">
               <HashtagsPage />
             </RouteMe>
 
-            <RouteMe path="/hashtag/:name">
+            <RouteMe path="/tags/:name">
               {params => {
                 return (<HashtagPage name={params.name || ""} />)
               }}
