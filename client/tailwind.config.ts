@@ -8,7 +8,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'theme': '#fc466b',
+        'theme': '#8d78eb',
         'theme-hover': '#b13049',
         'theme-active': '#972038',
         'background': {
