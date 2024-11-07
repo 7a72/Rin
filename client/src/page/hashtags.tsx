@@ -9,6 +9,7 @@ import { siteName } from "../utils/constants";
 
 type Hashtag = {
     id: number;
+    alias?: string;
     name: string;
     createdAt: Date;
     updatedAt: Date;

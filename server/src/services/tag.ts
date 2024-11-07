@@ -35,7 +35,7 @@ export function TagService() {
                                 with: {
                                     feed: {
                                         columns: {
-                                            id: true, title: true, summary: true, content: true, createdAt: true, updatedAt: true,
+                                            id: true, alias: true, title: true, summary: true, content: true, createdAt: true, updatedAt: true,
                                             draft: false,
                                             listed: false
                                         },

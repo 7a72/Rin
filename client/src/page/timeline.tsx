@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 
 
 export function TimelinePage() {
-    const [feeds, setFeeds] = useState<Partial<Record<number, { id: number; title: string | null; createdAt: Date; }[]>>>()
+    const [feeds, setFeeds] = useState<Partial<Record<number, { id: number; alias?: string | null; title: string | null; createdAt: Date; }[]>>>()
     const [length, setLength] = useState(0)
     const ref = useRef(false)
     const { t } = useTranslation()
@@ -62,8 +62,8 @@ export function TimelinePage() {
                                     </span>
                             </h1>
                             <div className="w-full flex flex-col justify-center items-start my-4">
-                                {feeds[+year]?.map(({ id, title, createdAt }) => (
-                                    <FeedItem key={id} id={id.toString()} title={title || t('untitled')} createdAt={new Date(createdAt)} />
+                                {feeds[+year]?.map(({ id, alias, title, createdAt }) => (
+                                    <FeedItem key={id} id={id.toString()} alias={alias} title={title || t('untitled')} createdAt={new Date(createdAt)} />
                                 ))}
                             </div>
                         </div>
@@ -74,8 +74,9 @@ export function TimelinePage() {
     )
 }
 
-export function FeedItem({ id, title, createdAt }: { id: string, title: string, createdAt: Date }) {
+export function FeedItem({ id, alias, title, createdAt }: { id: string, alias?: string | null, title: string, createdAt: Date }) {
     const formatter = new Intl.DateTimeFormat('en-US', { day: '2-digit', month: '2-digit' });
+    const postLink = alias ? `/posts/${alias}` : `/feed/${id}`;
     return (
         <div className="flex flex-row pl-8">
             <div className="flex flex-row items-center">
@@ -85,7 +86,7 @@ export function FeedItem({ id, title, createdAt }: { id: string, title: string, 
                 <span className="t-secondary text-sm" title={new Date(createdAt).toLocaleString()}>
                     {formatter.format(new Date(createdAt))}
                 </span>
-                <Link href={`/feed/${id}`} target="_blank" className="text-base t-primary hover:text-theme text-pretty overflow-hidden">
+                <Link href={postLink} target="_blank" className="text-base t-primary hover:text-theme text-pretty overflow-hidden">
                     {title}
                 </Link>
             </div>

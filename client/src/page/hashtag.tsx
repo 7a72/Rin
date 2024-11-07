@@ -18,6 +18,7 @@ type FeedsData = {
             id: number;
         }[];
         id: number;
+        alias?: string;
         title: string | null;
         summary: string;
         content: string;
@@ -29,7 +30,7 @@ type FeedsData = {
             avatar: string | null;
         };
     }[] | undefined;
-}
+};
 
 export function HashtagPage({ name }: { name: string }) {
     const { t } = useTranslation()
@@ -77,8 +78,8 @@ export function HashtagPage({ name }: { name: string }) {
                     </div>
                     <Waiting for={status === 'idle'}>
                         <div className="wauto flex flex-col">
-                            {hashtag?.feeds?.map(({ id, ...feed }: any) => (
-                                <FeedCard key={id} id={id} {...feed} />
+                            {hashtag?.feeds?.map(({ id, alias, ...feed }: any) => (
+                                <FeedCard key={id} id={id} alias={alias} {...feed} />
                             ))}
                         </div>
                     </Waiting>
