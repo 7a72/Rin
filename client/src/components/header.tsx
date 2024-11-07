@@ -141,7 +141,7 @@ function NavBar({ menu, onClick }: { menu: boolean, onClick?: () => void }) {
     return (
         <>
             <NavItem menu={menu} onClick={onClick} title={t('article.title')}
-                selected={location === "/" || location.startsWith('/feed')} href="/" />
+                selected={location === "/" || location.startsWith('/posts')} href="/" />
             <NavItem menu={menu} onClick={onClick} title={t('timeline')} selected={location === "/timeline"} href="/timeline" />
             <NavItem menu={menu} onClick={onClick} title={t('hashtags')} selected={location === "/tags"} href="/tags" />
             <NavItem menu={menu} onClick={onClick} when={profile?.permission == true} title={t('writing')}

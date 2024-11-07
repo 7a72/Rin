@@ -12,7 +12,7 @@ export function FeedCard({ id, alias, title, avatar, draft, listed, top, summary
         createdAt: Date, updatedAt: Date
     }) {
     const { t } = useTranslation()
-    const postLink = alias ? `/posts/${alias}` : `/feed/${id}`;
+    const postLink = alias ? `/posts/${alias}` : `/posts/${id}`;
     return useMemo(() => (
         <>
             <Link href={postLink} target="_blank" className="w-full rounded-2xl bg-w my-2 p-6 duration-300 bg-button">
@@ -54,5 +54,5 @@ export function FeedCard({ id, alias, title, avatar, draft, listed, top, summary
 
             </Link>
         </>
-    ), [id, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt])
+    ), [id, alias, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt])
 }

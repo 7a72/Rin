@@ -67,7 +67,7 @@ async function publish({
   if (data && typeof data !== "string") {
     showAlert(t("publish.success"), () => {
       Cache.with().clear();
-      window.location.href = "/feed/" + data.insertedId;
+      window.location.href = "/posts/" + data.insertedId;
     });
   }
 }
@@ -121,7 +121,7 @@ async function update({
   } else {
     showAlert(t("update.success"), () => {
       Cache.with(id).clear();
-      window.location.href = "/feed/" + id;
+      window.location.href = "/posts/" + id;
     });
   }
 }

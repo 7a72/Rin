@@ -76,7 +76,7 @@ export function TimelinePage() {
 
 export function FeedItem({ id, alias, title, createdAt }: { id: string, alias?: string | null, title: string, createdAt: Date }) {
     const formatter = new Intl.DateTimeFormat('en-US', { day: '2-digit', month: '2-digit' });
-    const postLink = alias ? `/posts/${alias}` : `/feed/${id}`;
+    const postLink = alias ? `/posts/${alias}` : `/posts/${id}`;
     return (
         <div className="flex flex-row pl-8">
             <div className="flex flex-row items-center">
