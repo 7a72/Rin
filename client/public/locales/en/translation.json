@@ -4,6 +4,7 @@
     "title": "About"
   },
   "alert": "Alert",
+  "allow_comment": "Enable Comments",
   "alias": "Alias",
   "article": {
     "delete": {

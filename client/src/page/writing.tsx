@@ -28,6 +28,7 @@ async function publish({
   tags,
   draft,
   createdAt,
+  allowComment,
   onCompleted,
   showAlert
 }: {
@@ -39,10 +40,11 @@ async function publish({
   draft: boolean;
   alias?: string;
   createdAt?: Date;
+  allowComment: boolean;
   onCompleted?: () => void;
   showAlert: ShowAlertType;
 }) {
-  const t = i18n.t
+  const t = i18n.t;
   const { data, error } = await client.feed.index.post(
     {
       title,
@@ -53,6 +55,7 @@ async function publish({
       listed,
       draft,
       createdAt,
+      allowComment,
     },
     {
       headers: headersWithAuth(),
@@ -82,6 +85,7 @@ async function update({
   listed,
   draft,
   createdAt,
+  allowComment,
   onCompleted,
   showAlert
 }: {
@@ -94,10 +98,11 @@ async function update({
   tags?: string[];
   draft?: boolean;
   createdAt?: Date;
+  allowComment: boolean;
   onCompleted?: () => void;
   showAlert: ShowAlertType;
 }) {
-  const t = i18n.t
+  const t = i18n.t;
   const { error } = await client.feed({ id }).post(
     {
       title,
@@ -108,6 +113,7 @@ async function update({
       listed,
       draft,
       createdAt,
+      allowComment,
     },
     {
       headers: headersWithAuth(),
@@ -167,6 +173,7 @@ export function WritingPage({ id }: { id?: number }) {
   const [draft, setDraft] = useState(false);
   const [listed, setListed] = useState(true);
   const [content, setContent] = cache.useCache("content", "");
+  const [allowComment, setAllowComment] = useState(true);
   const [createdAt, setCreatedAt] = useState<Date | undefined>(new Date());
   const [preview, setPreview] = useCache<'edit' | 'preview' | 'comparison'>("preview", 'edit');
   const [uploading, setUploading] = useState(false)
@@ -191,6 +198,7 @@ export function WritingPage({ id }: { id?: number }) {
         draft,
         listed,
         createdAt,
+        allowComment,
         onCompleted: () => {
           setPublishing(false)
         },
@@ -215,6 +223,7 @@ export function WritingPage({ id }: { id?: number }) {
         alias,
         listed,
         createdAt,
+        allowComment,
         onCompleted: () => {
           setPublishing(false)
         },
@@ -303,6 +312,7 @@ export function WritingPage({ id }: { id?: number }) {
             if (summary == "") setSummary(data.summary);
             setListed(data.listed === 1);
             setDraft(data.draft === 1);
+            setAllowComment(data.allowComment === 1 );
             setCreatedAt(new Date(data.createdAt));
           }
         });
@@ -386,6 +396,18 @@ export function WritingPage({ id }: { id?: number }) {
               value={listed}
               setValue={setListed}
               placeholder={t('listed')}
+            />
+          </div>
+          <div
+            className="select-none flex flex-row justify-between items-center mt-6 mb-2 px-4"
+            onClick={() => setAllowComment(!allowComment)}
+          >
+            <p>{t('allow_comment')}</p>
+            <Checkbox
+              id="allowComment"
+              value={allowComment}
+              setValue={setAllowComment}
+              placeholder={t('allowComment')}
             />
           </div>
           <div className="select-none flex flex-row justify-between items-center mt-4 mb-2 pl-4">

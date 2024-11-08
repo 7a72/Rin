@@ -4,6 +4,7 @@
     "title": "关于"
   },
   "alert": "提示",
+  "allow_comment": "启用评论",
   "alias": "别名",
   "article": {
     "delete": {

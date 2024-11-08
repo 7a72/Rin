@@ -102,7 +102,7 @@ export function FeedService() {
                         orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
                     }))
                 })
-                .post('/', async ({ admin, set, uid, body: { title, alias, listed, content, summary, draft, tags, createdAt } }) => {
+                .post('/', async ({ admin, set, uid, body: { title, alias, listed, content, summary, draft, tags, createdAt, allowComment } }) => {
                     if (!admin) {
                         set.status = 403;
                         return 'Permission denied';
@@ -135,7 +135,8 @@ export function FeedService() {
                         listed: listed ? 1 : 0,
                         draft: draft ? 1 : 0,
                         createdAt: date,
-                        updatedAt: date
+                        updatedAt: date,
+                        allowComment: allowComment ? 1 : 0
                     }).returning({ insertedId: feeds.id });
                     await bindTagToPost(db, result[0].insertedId, tags);
                     await PublicCache().deletePrefix('feeds_');
@@ -154,7 +155,8 @@ export function FeedService() {
                         draft: t.Boolean(),
                         listed: t.Boolean(),
                         createdAt: t.Optional(t.Date()),
-                        tags: t.Array(t.String())
+                        tags: t.Array(t.String()),
+                        allowComment: t.Boolean()
                     })
                 })
                 .get('/:id', async ({ uid, admin, set, headers, params: { id } }) => {
@@ -221,7 +223,7 @@ export function FeedService() {
                     set,
                     uid,
                     params: { id },
-                    body: { title, listed, content, summary, alias, draft, top, tags, createdAt }
+                    body: { title, listed, content, summary, alias, draft, top, tags, createdAt, allowComment }
                 }) => {
                     const id_num = parseInt(id);
                     const feed = await db.query.feeds.findFirst({
@@ -243,6 +245,7 @@ export function FeedService() {
                         top,
                         listed: listed ? 1 : 0,
                         draft: draft ? 1 : 0,
+                        allowComment: allowComment ? 1 : 0,
                         createdAt: createdAt ? new Date(createdAt) : undefined,
                         updatedAt: new Date()
                     }).where(eq(feeds.id, id_num));
@@ -261,7 +264,8 @@ export function FeedService() {
                         draft: t.Optional(t.Boolean()),
                         createdAt: t.Optional(t.Date()),
                         tags: t.Optional(t.Array(t.String())),
-                        top: t.Optional(t.Integer())
+                        top: t.Optional(t.Integer()),
+                        allowComment: t.Optional(t.Boolean())
                     })
                 })
                 .post('/top/:id', async ({
@@ -486,3 +490,6 @@ async function clearFeedCache(id: number, alias: string | null, newAlias: string
     if (newAlias)
         await cache.delete(`feed_${newAlias}`, false);
 }
+
+
+

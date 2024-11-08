@@ -35,6 +35,7 @@ type Feed = {
   };
   pv: number;
   uv: number;
+  allowComment: number
 };
 
 export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Element, clean: (id: string) => void }) {
@@ -294,7 +295,7 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                   </div>
                 </div>
               </article>
-              {feed && <TwikooComments envId={`${process.env.twikooEnvID}`} />}
+              {feed.allowComment === 1 && <TwikooComments envId={`${process.env.twikooEnvID}`} />}
               <div className="h-16" />
             </main>
             <div className="w-80 hidden lg:block relative">
