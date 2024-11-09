@@ -94,7 +94,7 @@ export function FeedService() {
                     })
                 })
                 .get('/timeline', async () => {
-                    const where = eq(feeds.status, 'publish');
+                    const where = and(eq(feeds.status, 'publish'), eq(feeds.property, 'post'));
                     return (await db.query.feeds.findMany({
                         where: where,
                         columns: {
