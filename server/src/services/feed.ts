@@ -189,7 +189,7 @@ export function FeedService() {
                         return 'Not found';
                     }
                     // permission check
-                    if (or(eq(feeds.status, 'draft'), eq(feeds.status, 'private')) && feed.uid !== uid && !admin) {
+                    if (feed.status !== 'publish' && (feed.uid !== uid && !admin)) {
                         set.status = 403;
                         return 'Permission denied';
                     }
