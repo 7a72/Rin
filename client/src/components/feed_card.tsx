@@ -3,16 +3,33 @@ import { useTranslation } from "react-i18next";
 import { timeago } from "../utils/timeago";
 import { HashTag } from "./hashtag";
 import { useMemo } from "react";
-export function FeedCard({ id, alias, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt }:
-    {
-        id: string, alias?: string, avatar?: string,
-        draft?: number, listed?: number, top?: number,
-        title: string, summary: string,
-        hashtags: { id: number, name: string }[],
-        createdAt: Date, updatedAt: Date
-    }) {
-    const { t } = useTranslation()
+
+export function FeedCard({
+    id,
+    alias,
+    title,
+    avatar,
+    status,
+    top,
+    summary,
+    hashtags,
+    createdAt,
+    updatedAt
+}: {
+    id: string,
+    alias?: string,
+    avatar?: string,
+    status: 'publish' | 'draft' | 'private',
+    top?: number,
+    title: string,
+    summary: string,
+    hashtags: { id: number, name: string }[],
+    createdAt: Date,
+    updatedAt: Date
+}) {
+    const { t } = useTranslation();
     const postLink = alias ? `/posts/${alias}` : `/posts/${id}`;
+
     return useMemo(() => (
         <>
             <Link href={postLink} target="_blank" className="w-full rounded-2xl bg-w my-2 p-6 duration-300 bg-button">
@@ -35,11 +52,9 @@ export function FeedCard({ id, alias, title, avatar, draft, listed, top, summary
                     }
                 </p>
                 <p className="space-x-2">
-                    {draft === 1 && <span className="text-gray-400 text-sm">草稿</span>}
-                    {listed === 0 && <span className="text-gray-400 text-sm">未列出</span>}
-                    {top === 1 && <span className="text-theme text-sm">
-                        置顶
-                    </span>}
+                    {status === 'draft' && <span className="text-gray-400 text-sm">{t('draft')}</span>}
+                    {status === 'private' && <span className="text-gray-400 text-sm">{t('private')}</span>}
+                    {top === 1 && <span className="text-theme text-sm">{t('top.title')}</span>}
                 </p>
                 <p className="text-pretty overflow-hidden dark:text-neutral-500">
                     {summary}
@@ -51,8 +66,7 @@ export function FeedCard({ id, alias, title, avatar, draft, listed, top, summary
                         ))}
                     </div>
                 }
-
             </Link>
         </>
-    ), [id, alias, title, avatar, draft, listed, top, summary, hashtags, createdAt, updatedAt])
+    ), [id, alias, title, avatar, status, top, summary, hashtags, createdAt, updatedAt]);
 }
