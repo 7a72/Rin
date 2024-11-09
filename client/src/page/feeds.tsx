@@ -68,7 +68,7 @@ export function FeedsPage() {
     return (
         <>
             <Helmet>
-                <title>{`${t('article.title')} - ${process.env.NAME}`}</title>
+                <title>{`${process.env.NAME}`}</title>
                 <meta property="og:site_name" content={siteName} />
                 <meta property="og:title" content={t('article.title')} />
                 <meta property="og:image" content={process.env.AVATAR} />
@@ -77,10 +77,7 @@ export function FeedsPage() {
             </Helmet>
             <Waiting for={feeds.draft.size + feeds.publish.size + feeds.private.size > 0 || status === 'idle'}>
                 <main className="w-full flex flex-col justify-center items-center mb-8">
-                    <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
-                        <p>
-                            {listState === 'draft' ? t('draft_bin') : listState === 'publish' ? t('article.title') : t('unlisted')}
-                        </p>
+                    <div className="wauto text-start text-black dark:text-white py-4">
                         <div className="flex flex-row justify-between">
                             <p className="text-sm mt-4 text-neutral-500 font-normal">
                                 {t('article.total$count', { count: feeds[listState]?.size })}

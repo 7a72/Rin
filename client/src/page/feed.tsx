@@ -205,7 +205,14 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                 aria-label={feed.title ?? "Unnamed"}
               >
                 <div className="flex justify-between">
+                
                   <div>
+                    <div className="flex flex-row items-center">
+                      <h1 className="text-2xl font-bold t-primary break-all">
+                        {feed.title}
+                      </h1>
+                      <div className="flex-1 w-0" />
+                    </div>
                     <div className="mt-1 mb-1 flex gap-1">
                       <p
                         className="text-gray-400 text-[12px]"
@@ -238,12 +245,6 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                         {feed.uv}
                       </span>
                     </p>}
-                    <div className="flex flex-row items-center">
-                      <h1 className="text-2xl font-bold t-primary break-all">
-                        {feed.title}
-                      </h1>
-                      <div className="flex-1 w-0" />
-                    </div>
                   </div>
                   <div className="pt-2">
                     {profile?.permission && (

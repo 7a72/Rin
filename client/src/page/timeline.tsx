@@ -41,7 +41,7 @@ export function TimelinePage() {
             </Helmet>
             <Waiting for={feeds}>
                 <main className="w-full flex flex-col justify-center items-center mb-8 ani-show">
-                    <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
+                    <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-medium">
                         <p>
                             {t('timeline')}
                         </p>

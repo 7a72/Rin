@@ -140,7 +140,7 @@ function NavBar({ menu, onClick }: { menu: boolean, onClick?: () => void }) {
     const { t } = useTranslation()
     return (
         <>
-            <NavItem menu={menu} onClick={onClick} title={t('article.title')}
+            <NavItem menu={menu} onClick={onClick} title={t('home')}
                 selected={location === "/" || location.startsWith('/posts')} href="/" />
             <NavItem menu={menu} onClick={onClick} title={t('timeline')} selected={location === "/timeline"} href="/timeline" />
             <NavItem menu={menu} onClick={onClick} title={t('hashtags')} selected={location === "/tags"} href="/tags" />
