@@ -1,4 +1,4 @@
-import { and, count, desc, eq, like, or } from "drizzle-orm";
+import { count, desc, eq, like, or } from "drizzle-orm";
 import Elysia, { t } from "elysia";
 import { XMLParser } from "fast-xml-parser";
 import html2md from 'html-to-md';
@@ -17,7 +17,7 @@ export function FeedService() {
         .group('/feed', (group) =>
             group
                 .get('/', async ({ admin, set, query: { page, limit, type } }) => {
-                    if ((type === 'draft' || type === 'unlisted') && !admin) {
+                    if ((type === 'draft' || type === 'private') && !admin) {
                         set.status = 403;
                         return 'Permission denied';
                     }
@@ -29,7 +29,11 @@ export function FeedService() {
                     if (cached) {
                         return cached;
                     }
-                    const where = type === 'draft' ? eq(feeds.draft, 1) : type === 'unlisted' ? and(eq(feeds.draft, 0), eq(feeds.listed, 0)) : and(eq(feeds.draft, 0), eq(feeds.listed, 1));
+                    const where = type === 'draft'
+                        ? eq(feeds.status, 'draft')
+                        : type === 'private'
+                        ? eq(feeds.status, 'private')
+                        : eq(feeds.status, 'publish');
                     const size = await db.select({ count: count() }).from(feeds).where(where);
                     if (size[0].count === 0) {
                         return {
@@ -41,8 +45,7 @@ export function FeedService() {
                     const feed_list = (await db.query.feeds.findMany({
                         where: where,
                         columns: admin ? undefined : {
-                            draft: false,
-                            listed: false
+                            status: false
                         },
                         with: {
                             hashtags: {
@@ -79,7 +82,7 @@ export function FeedService() {
                         data: feed_list,
                         hasNext
                     }
-                    if (type === undefined || type === 'normal' || type === '')
+                    if (type === undefined || type === 'publish' || type === '')
                         await cache.set(cacheKey, data);
                     return data
                 }, {
@@ -90,7 +93,7 @@ export function FeedService() {
                     })
                 })
                 .get('/timeline', async () => {
-                    const where = and(eq(feeds.draft, 0), eq(feeds.listed, 1));
+                    const where = eq(feeds.status, 'publish');
                     return (await db.query.feeds.findMany({
                         where: where,
                         columns: {
@@ -102,7 +105,7 @@ export function FeedService() {
                         orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
                     }))
                 })
-                .post('/', async ({ admin, set, uid, body: { title, alias, listed, content, summary, draft, tags, createdAt, allowComment } }) => {
+                .post('/', async ({ admin, set, uid, body: { title, alias, content, summary, status, tags, createdAt, allowComment } }) => {
                     if (!admin) {
                         set.status = 403;
                         return 'Permission denied';
@@ -126,16 +129,17 @@ export function FeedService() {
                         return 'Content already exists';
                     }
                     const date = createdAt ? new Date(createdAt) : new Date();
+                    const validStatuses = ['publish', 'draft', 'private'];
+                    const finalStatus = status && validStatuses.includes(status) ? status : 'publish';
                     const result = await db.insert(feeds).values({
                         title,
                         content,
                         summary,
                         uid,
                         alias,
-                        listed: listed ? 1 : 0,
-                        draft: draft ? 1 : 0,
                         createdAt: date,
                         updatedAt: date,
+                        status: finalStatus,
                         allowComment: allowComment ? 1 : 0
                     }).returning({ insertedId: feeds.id });
                     await bindTagToPost(db, result[0].insertedId, tags);
@@ -152,8 +156,7 @@ export function FeedService() {
                         content: t.String(),
                         summary: t.String(),
                         alias: t.Optional(t.String()),
-                        draft: t.Boolean(),
-                        listed: t.Boolean(),
+                        status: t.Optional(t.String()),
                         createdAt: t.Optional(t.Date()),
                         tags: t.Array(t.String()),
                         allowComment: t.Boolean()
@@ -223,7 +226,7 @@ export function FeedService() {
                     set,
                     uid,
                     params: { id },
-                    body: { title, listed, content, summary, alias, draft, top, tags, createdAt, allowComment }
+                    body: { title, content, summary, alias, status, top, tags, createdAt, allowComment }
                 }) => {
                     const id_num = parseInt(id);
                     const feed = await db.query.feeds.findFirst({
@@ -237,14 +240,15 @@ export function FeedService() {
                         set.status = 403;
                         return 'Permission denied';
                     }
+                    const validStatuses = ['publish', 'draft', 'private'];
+                    const finalStatus = status && validStatuses.includes(status) ? status : 'publish';
                     await db.update(feeds).set({
                         title,
                         content,
                         summary,
                         alias,
                         top,
-                        listed: listed ? 1 : 0,
-                        draft: draft ? 1 : 0,
+                        status: finalStatus,
                         allowComment: allowComment ? 1 : 0,
                         createdAt: createdAt ? new Date(createdAt) : undefined,
                         updatedAt: new Date()
@@ -260,10 +264,9 @@ export function FeedService() {
                         alias: t.Optional(t.String()),
                         content: t.Optional(t.String()),
                         summary: t.Optional(t.String()),
-                        listed: t.Boolean(),
-                        draft: t.Optional(t.Boolean()),
                         createdAt: t.Optional(t.Date()),
                         tags: t.Optional(t.Array(t.String())),
+                        status: t.Optional(t.String()),
                         top: t.Optional(t.Integer()),
                         allowComment: t.Optional(t.Boolean())
                     })
@@ -335,8 +338,7 @@ export function FeedService() {
                     like(feeds.summary, searchKeyword),
                     like(feeds.alias, searchKeyword)),
                 columns: admin ? undefined : {
-                    draft: false,
-                    listed: false
+                    status: false
                 },
                 with: {
                     hashtags: {
@@ -403,7 +405,6 @@ export function FeedService() {
             const feedItems: FeedItem[] = items?.map((item: any) => {
                 const createdAt = new Date(item?.['wp:post_date']);
                 const updatedAt = new Date(item?.['wp:post_modified']);
-                const draft = item?.['wp:status'] !== 'publish';
                 const contentHtml = item?.['content:encoded'];
                 const content = html2md(contentHtml);
                 const summary = content.length > 100 ? content.slice(0, 100) : content;
@@ -413,11 +414,19 @@ export function FeedService() {
                 } else if (tags && typeof tags === 'string') {
                     tags = [tags];
                 }
+                let status;
+                if (item?.['wp:status'] === 'publish') {
+                    status = 'publish';
+                } else if (item?.['wp:status'] === 'private') {
+                    status = 'private';
+                } else {
+                    status = 'draft';
+                }
                 return {
                     title: item.title,
                     summary,
                     content,
-                    draft,
+                    status,
                     createdAt,
                     updatedAt,
                     tags
@@ -445,8 +454,7 @@ export function FeedService() {
                     content: item.content,
                     summary: item.summary,
                     uid: 1,
-                    listed: 1,
-                    draft: item.draft ? 1 : 0,
+                    status: item.status,
                     createdAt: item.createdAt,
                     updatedAt: item.updatedAt
                 }).returning({ insertedId: feeds.id });
@@ -473,7 +481,7 @@ type FeedItem = {
     title: string;
     summary: string;
     content: string;
-    draft: boolean;
+    status: string;
     createdAt: Date;
     updatedAt: Date;
     tags?: string[];
@@ -490,6 +498,3 @@ async function clearFeedCache(id: number, alias: string | null, newAlias: string
     if (newAlias)
         await cache.delete(`feed_${newAlias}`, false);
 }
-
-
-

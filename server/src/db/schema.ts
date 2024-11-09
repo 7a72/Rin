@@ -15,10 +15,10 @@ export const feeds = sqliteTable("feeds", {
     top: integer("top").default(0).notNull(),
     uid: integer("uid").references(() => users.id).notNull(),
     allowComment: integer("allowComment").default(1).notNull(),
+    status: text("status").default("publish").notNull(),
     createdAt: created_at,
     updatedAt: updated_at,
 });
-
 
 export const visits = sqliteTable("visits", {
     id: integer("id").primaryKey(),

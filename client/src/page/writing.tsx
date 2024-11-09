@@ -22,22 +22,20 @@ import mermaid from 'mermaid';
 async function publish({
   title,
   alias,
-  listed,
   content,
   summary,
   tags,
-  draft,
+  status,
   createdAt,
   allowComment,
   onCompleted,
   showAlert
 }: {
   title: string;
-  listed: boolean;
   content: string;
   summary: string;
   tags: string[];
-  draft: boolean;
+  status: string;
   alias?: string;
   createdAt?: Date;
   allowComment: boolean;
@@ -52,8 +50,7 @@ async function publish({
       content,
       summary,
       tags,
-      listed,
-      draft,
+      status,
       createdAt,
       allowComment,
     },
@@ -82,21 +79,19 @@ async function update({
   content,
   summary,
   tags,
-  listed,
-  draft,
+  status,
   createdAt,
   allowComment,
   onCompleted,
   showAlert
 }: {
   id: number;
-  listed: boolean;
   title?: string;
   alias?: string;
   content?: string;
   summary?: string;
   tags?: string[];
-  draft?: boolean;
+  status: string;
   createdAt?: Date;
   allowComment: boolean;
   onCompleted?: () => void;
@@ -110,8 +105,7 @@ async function update({
       content,
       summary,
       tags,
-      listed,
-      draft,
+      status,
       createdAt,
       allowComment,
     },
@@ -170,8 +164,7 @@ export function WritingPage({ id }: { id?: number }) {
   const [summary, setSummary] = cache.useCache("summary", "");
   const [tags, setTags] = cache.useCache("tags", "");
   const [alias, setAlias] = cache.useCache("alias", "");
-  const [draft, setDraft] = useState(false);
-  const [listed, setListed] = useState(true);
+  const [status, setStatus] = useState<'publish' | 'draft' | 'private'>('publish');
   const [content, setContent] = cache.useCache("content", "");
   const [allowComment, setAllowComment] = useState(true);
   const [createdAt, setCreatedAt] = useState<Date | undefined>(new Date());
@@ -195,8 +188,7 @@ export function WritingPage({ id }: { id?: number }) {
         summary,
         alias,
         tags: tagsplit,
-        draft,
-        listed,
+        status,
         createdAt,
         allowComment,
         onCompleted: () => {
@@ -219,9 +211,8 @@ export function WritingPage({ id }: { id?: number }) {
         content,
         summary,
         tags: tagsplit,
-        draft,
+        status,
         alias,
-        listed,
         createdAt,
         allowComment,
         onCompleted: () => {
@@ -305,13 +296,11 @@ export function WritingPage({ id }: { id?: number }) {
         .then(({ data }) => {
           if (data && typeof data !== "string") {
             if (title == "" && data.title) setTitle(data.title);
-            if (tags == "" && data.hashtags)
-              setTags(data.hashtags.map(({ name }) => `#${name}`).join(" "));
+            if (tags == "" && data.hashtags) setTags(data.hashtags.map(({ name }) => `#${name}`).join(" "));
             if (alias == "" && data.alias) setAlias(data.alias);
             if (content == "") setContent(data.content);
             if (summary == "") setSummary(data.summary);
-            setListed(data.listed === 1);
-            setDraft(data.draft === 1);
+            if (status === "publish") setStatus(data.status as "publish" | "draft" | "private" || "publish")
             setAllowComment(data.allowComment === 1 );
             setCreatedAt(new Date(data.createdAt));
           }
@@ -374,29 +363,13 @@ export function WritingPage({ id }: { id?: number }) {
             placeholder={t("alias")}
             className="mt-4"
           />
-          <div
-            className="select-none flex flex-row justify-between items-center mt-6 mb-2 px-4"
-            onClick={() => setDraft(!draft)}
-          >
-            <p>{t('visible.self_only')}</p>
-            <Checkbox
-              id="draft"
-              value={draft}
-              setValue={setDraft}
-              placeholder={t('draft')}
-            />
-          </div>
-          <div
-            className="select-none flex flex-row justify-between items-center mt-6 mb-2 px-4"
-            onClick={() => setListed(!listed)}
-          >
-            <p>{t('listed')}</p>
-            <Checkbox
-              id="listed"
-              value={listed}
-              setValue={setListed}
-              placeholder={t('listed')}
-            />
+          <div className="select-none flex flex-row justify-between items-center mt-6 mb-2 pl-4">
+            <p>{t('status')}</p>
+              <select value={status} onChange={(e) => setStatus(e.target.value as 'publish' | 'draft' | 'private')}>
+              <option value="publish">{t('published')}</option>
+              <option value="draft">{t('draft')}</option>
+              <option value="private">{t('private')}</option>
+            </select>
           </div>
           <div
             className="select-none flex flex-row justify-between items-center mt-6 mb-2 px-4"

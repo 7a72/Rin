@@ -108,7 +108,6 @@
     },
     "title": "目次"
   },
-  "listed": "記事にリスト",
   "login": {
     "oauth_only": "続行するにはログインしてください",
     "password": {
@@ -123,6 +122,8 @@
   "next": "次のページ",
   "preview": "プレビュー",
   "previous": "前のページ",
+  "private": "隠れる",
+  "published": "公開",
   "publish": {
     "success": "公開に成功しました",
     "title": "公開"
@@ -200,7 +201,7 @@
   "top": {
     "title": "キャッシュをクリア"
   },
-  "unlisted": "リストされていない",
+  "unlisted": "隠れる",
   "untitled": "無題",
   "untop": {
     "title": "トップ解除"

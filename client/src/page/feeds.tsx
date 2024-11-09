@@ -16,7 +16,7 @@ type FeedsData = {
     hasNext: boolean
 }
 
-type FeedType = 'draft' | 'unlisted' | 'normal'
+type FeedType = 'draft' | 'private' | 'publish'
 
 type FeedsMap = {
     [key in FeedType]: FeedsData
@@ -26,12 +26,12 @@ export function FeedsPage() {
     const { t } = useTranslation()
     const query = new URLSearchParams(useSearch());
     const profile = useContext(ProfileContext);
-    const [listState, _setListState] = useState<FeedType>(query.get("type") as FeedType || 'normal')
+    const [listState, _setListState] = useState<FeedType>(query.get("type") as FeedType || 'publish')
     const [status, setStatus] = useState<'loading' | 'idle'>('idle')
     const [feeds, setFeeds] = useState<FeedsMap>({
         draft: { size: 0, data: [], hasNext: false },
-        unlisted: { size: 0, data: [], hasNext: false },
-        normal: { size: 0, data: [], hasNext: false }
+        private: { size: 0, data: [], hasNext: false },
+        publish: { size: 0, data: [], hasNext: false }
     })
     const page = tryInt(1, query.get("page"))
     const limit = tryInt(10, query.get("limit"), process.env.PAGE_SIZE)
@@ -57,7 +57,7 @@ export function FeedsPage() {
     useEffect(() => {
         const key = `${query.get("page")} ${query.get("type")}`
         if (ref.current == key) return
-        const type = query.get("type") as FeedType || 'normal'
+        const type = query.get("type") as FeedType || 'publish'
         if (type !== listState) {
             _setListState(type)
         }
@@ -75,11 +75,11 @@ export function FeedsPage() {
                 <meta property="og:type" content="article" />
                 <meta property="og:url" content={document.URL} />
             </Helmet>
-            <Waiting for={feeds.draft.size + feeds.normal.size + feeds.unlisted.size > 0 || status === 'idle'}>
+            <Waiting for={feeds.draft.size + feeds.publish.size + feeds.private.size > 0 || status === 'idle'}>
                 <main className="w-full flex flex-col justify-center items-center mb-8">
                     <div className="wauto text-start text-black dark:text-white py-4 text-4xl font-bold">
                         <p>
-                            {listState === 'draft' ? t('draft_bin') : listState === 'normal' ? t('article.title') : t('unlisted')}
+                            {listState === 'draft' ? t('draft_bin') : listState === 'publish' ? t('article.title') : t('unlisted')}
                         </p>
                         <div className="flex flex-row justify-between">
                             <p className="text-sm mt-4 text-neutral-500 font-normal">
@@ -87,10 +87,10 @@ export function FeedsPage() {
                             </p>
                             {profile?.permission &&
                                 <div className="flex flex-row space-x-4">
-                                    <Link href={listState === 'draft' ? '/?type=normal' : '/?type=draft'} className={`text-sm mt-4 text-neutral-500 font-normal ${listState === 'draft' ? "text-theme" : ""}`}>
+                                    <Link href={listState === 'draft' ? '/?type=publish' : '/?type=draft'} className={`text-sm mt-4 text-neutral-500 font-normal ${listState === 'draft' ? "text-theme" : ""}`}>
                                         {t('draft_bin')}
                                     </Link>
-                                    <Link href={listState === 'unlisted' ? '/?type=normal' : '/?type=unlisted'} className={`text-sm mt-4 text-neutral-500 font-normal ${listState === 'unlisted' ? "text-theme" : ""}`}>
+                                    <Link href={listState === 'private' ? '/?type=publish' : '/?type=private'} className={`text-sm mt-4 text-neutral-500 font-normal ${listState === 'private' ? "text-theme" : ""}`}>
                                         {t('unlisted')}
                                     </Link>
                                 </div>

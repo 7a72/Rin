@@ -108,7 +108,6 @@
     },
     "title": "Index"
   },
-  "listed": "Listed in articles",
   "login": {
     "oauth_only": "Please log in to continue",
     "password": {
@@ -123,6 +122,8 @@
   "next": "Next Page",
   "preview": "Preview",
   "previous": "Previous Page",
+  "private": "Hide",
+  "published": "Publish",
   "publish": {
     "success": "Publish successful",
     "title": "Publish"
@@ -200,7 +201,7 @@
   "top": {
     "title": "Top"
   },
-  "unlisted": "Unlisted",
+  "unlisted": "Hidden",
   "untitled": "Untitled",
   "untop": {
     "title": "Untop"
