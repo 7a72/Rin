@@ -120,9 +120,12 @@
     }
   },
   "next": "Next Page",
+  "page": "Page",
+  "post": "Post",
   "preview": "Preview",
   "previous": "Previous Page",
   "private": "Hide",
+  "property": "Type",
   "published": "Publish",
   "publish": {
     "success": "Publish successful",

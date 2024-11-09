@@ -85,7 +85,7 @@ export async function rssCrontab(env: Env) {
         }
     });
     const feed_list = await db.query.feeds.findMany({
-        where: and(eq(feeds.draft, 0), eq(feeds.listed, 1)),
+        where: and(eq(feeds.status, 'publish'), eq(feeds.property, 'post')),
         orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
         limit: 20,
         with: {

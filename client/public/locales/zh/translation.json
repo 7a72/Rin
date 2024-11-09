@@ -120,9 +120,12 @@
     }
   },
   "next": "下一页",
+  "page": "页面",
+  "post": "文章",
   "preview": "预览",
   "previous": "上一页",
   "private": "隐藏",
+  "property": "类型",
   "published": "发布",
   "publish": {
     "success": "发布成功",

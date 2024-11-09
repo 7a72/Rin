@@ -1,4 +1,4 @@
-import { count, desc, eq, like, or } from "drizzle-orm";
+import { and, count, desc, eq, like, or } from "drizzle-orm";
 import Elysia, { t } from "elysia";
 import { XMLParser } from "fast-xml-parser";
 import html2md from 'html-to-md';
@@ -33,7 +33,7 @@ export function FeedService() {
                         ? eq(feeds.status, 'draft')
                         : type === 'private'
                         ? eq(feeds.status, 'private')
-                        : eq(feeds.status, 'publish');
+                        : and(eq(feeds.status, 'publish'), eq(feeds.property, 'post'));
                     const size = await db.select({ count: count() }).from(feeds).where(where);
                     if (size[0].count === 0) {
                         return {
@@ -45,7 +45,8 @@ export function FeedService() {
                     const feed_list = (await db.query.feeds.findMany({
                         where: where,
                         columns: admin ? undefined : {
-                            status: false
+                            status: false,
+                            property: false
                         },
                         with: {
                             hashtags: {
@@ -105,7 +106,7 @@ export function FeedService() {
                         orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
                     }))
                 })
-                .post('/', async ({ admin, set, uid, body: { title, alias, content, summary, status, tags, createdAt, allowComment } }) => {
+                .post('/', async ({ admin, set, uid, body: { title, alias, content, summary, status, tags, property, createdAt, allowComment } }) => {
                     if (!admin) {
                         set.status = 403;
                         return 'Permission denied';
@@ -140,6 +141,7 @@ export function FeedService() {
                         createdAt: date,
                         updatedAt: date,
                         status: finalStatus,
+                        property: property || 'post',
                         allowComment: allowComment ? 1 : 0
                     }).returning({ insertedId: feeds.id });
                     await bindTagToPost(db, result[0].insertedId, tags);
@@ -156,7 +158,8 @@ export function FeedService() {
                         content: t.String(),
                         summary: t.String(),
                         alias: t.Optional(t.String()),
-                        status: t.Optional(t.String()),
+                        status: t.String(),
+                        property: t.String(),
                         createdAt: t.Optional(t.Date()),
                         tags: t.Array(t.String()),
                         allowComment: t.Boolean()
@@ -186,7 +189,7 @@ export function FeedService() {
                         return 'Not found';
                     }
                     // permission check
-                    if (feed.draft && feed.uid !== uid && !admin) {
+                    if (or(eq(feeds.status, 'draft'), eq(feeds.status, 'private')) && feed.uid !== uid && !admin) {
                         set.status = 403;
                         return 'Permission denied';
                     }
@@ -226,7 +229,7 @@ export function FeedService() {
                     set,
                     uid,
                     params: { id },
-                    body: { title, content, summary, alias, status, top, tags, createdAt, allowComment }
+                    body: { title, content, summary, alias, status, top, tags, createdAt, property, allowComment }
                 }) => {
                     const id_num = parseInt(id);
                     const feed = await db.query.feeds.findFirst({
@@ -249,6 +252,7 @@ export function FeedService() {
                         alias,
                         top,
                         status: finalStatus,
+                        property: property || 'post',
                         allowComment: allowComment ? 1 : 0,
                         createdAt: createdAt ? new Date(createdAt) : undefined,
                         updatedAt: new Date()
@@ -266,7 +270,8 @@ export function FeedService() {
                         summary: t.Optional(t.String()),
                         createdAt: t.Optional(t.Date()),
                         tags: t.Optional(t.Array(t.String())),
-                        status: t.Optional(t.String()),
+                        status: t.String(),
+                        property: t.String(),
                         top: t.Optional(t.Integer()),
                         allowComment: t.Optional(t.Boolean())
                     })
@@ -338,7 +343,8 @@ export function FeedService() {
                     like(feeds.summary, searchKeyword),
                     like(feeds.alias, searchKeyword)),
                 columns: admin ? undefined : {
-                    status: false
+                    status: false,
+                    property: false
                 },
                 with: {
                     hashtags: {
@@ -455,6 +461,7 @@ export function FeedService() {
                     summary: item.summary,
                     uid: 1,
                     status: item.status,
+                    property: 'post',
                     createdAt: item.createdAt,
                     updatedAt: item.updatedAt
                 }).returning({ insertedId: feeds.id });

@@ -120,9 +120,12 @@
     }
   },
   "next": "次のページ",
+  "page": "ページ",
+  "post": "記事",
   "preview": "プレビュー",
   "previous": "前のページ",
   "private": "隠れる",
+  "property": "タイプ",
   "published": "公開",
   "publish": {
     "success": "公開に成功しました",

@@ -26,6 +26,7 @@ async function publish({
   summary,
   tags,
   status,
+  property,
   createdAt,
   allowComment,
   onCompleted,
@@ -36,6 +37,7 @@ async function publish({
   summary: string;
   tags: string[];
   status: string;
+  property: string;
   alias?: string;
   createdAt?: Date;
   allowComment: boolean;
@@ -51,6 +53,7 @@ async function publish({
       summary,
       tags,
       status,
+      property,
       createdAt,
       allowComment,
     },
@@ -80,6 +83,7 @@ async function update({
   summary,
   tags,
   status,
+  property,
   createdAt,
   allowComment,
   onCompleted,
@@ -92,6 +96,7 @@ async function update({
   summary?: string;
   tags?: string[];
   status: string;
+  property: string;
   createdAt?: Date;
   allowComment: boolean;
   onCompleted?: () => void;
@@ -106,6 +111,7 @@ async function update({
       summary,
       tags,
       status,
+      property,
       createdAt,
       allowComment,
     },
@@ -165,6 +171,7 @@ export function WritingPage({ id }: { id?: number }) {
   const [tags, setTags] = cache.useCache("tags", "");
   const [alias, setAlias] = cache.useCache("alias", "");
   const [status, setStatus] = useState<'publish' | 'draft' | 'private'>('publish');
+  const [property, setProperty] = useState<'post' | 'page'>('post');
   const [content, setContent] = cache.useCache("content", "");
   const [allowComment, setAllowComment] = useState(true);
   const [createdAt, setCreatedAt] = useState<Date | undefined>(new Date());
@@ -189,6 +196,7 @@ export function WritingPage({ id }: { id?: number }) {
         alias,
         tags: tagsplit,
         status,
+        property,
         createdAt,
         allowComment,
         onCompleted: () => {
@@ -212,6 +220,7 @@ export function WritingPage({ id }: { id?: number }) {
         summary,
         tags: tagsplit,
         status,
+        property,
         alias,
         createdAt,
         allowComment,
@@ -300,7 +309,8 @@ export function WritingPage({ id }: { id?: number }) {
             if (alias == "" && data.alias) setAlias(data.alias);
             if (content == "") setContent(data.content);
             if (summary == "") setSummary(data.summary);
-            if (status === "publish") setStatus(data.status as "publish" | "draft" | "private" || "publish")
+            if (status === "publish") setStatus(data.status as "publish" | "draft" | "private" || "publish");
+            if (property === "post") setProperty(data.property as "post" | "page" || "post");
             setAllowComment(data.allowComment === 1 );
             setCreatedAt(new Date(data.createdAt));
           }
@@ -363,12 +373,19 @@ export function WritingPage({ id }: { id?: number }) {
             placeholder={t("alias")}
             className="mt-4"
           />
-          <div className="select-none flex flex-row justify-between items-center mt-6 mb-2 pl-4">
+          <div className="select-none flex flex-row justify-between items-center mt-6 mb-2 px-4">
             <p>{t('status')}</p>
-              <select value={status} onChange={(e) => setStatus(e.target.value as 'publish' | 'draft' | 'private')}>
+              <select className="border-solid rounded" value={status} onChange={(e) => setStatus(e.target.value as 'publish' | 'draft' | 'private')}>
               <option value="publish">{t('published')}</option>
               <option value="draft">{t('draft')}</option>
               <option value="private">{t('private')}</option>
+            </select>
+          </div>
+          <div className="select-none flex flex-row justify-between items-center mt-6 mb-2 px-4">
+            <p>{t('property')}</p>
+              <select className="border-solid rounded" value={property} onChange={(e) => setProperty(e.target.value as 'post' | 'page')}>
+              <option value="post">{t('post')}</option>
+              <option value="page">{t('page')}</option>
             </select>
           </div>
           <div
@@ -383,7 +400,7 @@ export function WritingPage({ id }: { id?: number }) {
               placeholder={t('allowComment')}
             />
           </div>
-          <div className="select-none flex flex-row justify-between items-center mt-4 mb-2 pl-4">
+          <div className="select-none flex flex-row justify-between items-center mt-4 mb-2 px-4">
             <p className="break-keep mr-2">
               {t('created_at')}
             </p>
