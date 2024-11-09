@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import Elysia from "elysia";
 import type { DB } from "../_worker";
 import { feedHashtags, hashtags } from "../db/schema";
@@ -36,8 +36,8 @@ export function TagService() {
                                     feed: {
                                         columns: {
                                             id: true, alias: true, title: true, summary: true, content: true, createdAt: true, updatedAt: true,
-                                            draft: false,
-                                            listed: false
+                                            status: false,
+                                            property: false
                                         },
                                         with: {
                                             user: {
@@ -52,7 +52,7 @@ export function TagService() {
                                                 }
                                             }
                                         },
-                                        where: (feeds: any) => admin ? undefined : and(eq(feeds.draft, 0), eq(feeds.listed, 1)),
+                                        where: (feeds: any) => admin ? undefined : eq(feeds.status, 'publish'),
                                     } as any
                                 }
                             }
