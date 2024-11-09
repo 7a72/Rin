@@ -95,7 +95,8 @@ export async function rssCrontab(env: Env) {
         }
     });
     for (const f of feed_list) {
-        const { summary, content, user, ...other } = f;
+        const { summary, content, user, alias, ...other } = f;
+        const postLink = alias ? `${frontendUrl}/posts/${alias}` : `${frontendUrl}/posts/${other.id}`;
         const file = await unified()
             .use(remarkParse)
             .use(remarkGfm)
@@ -106,7 +107,7 @@ export async function rssCrontab(env: Env) {
         feed.addItem({
             title: other.title || "No title",
             id: other.id?.toString() || "0",
-            link: `${frontendUrl}/feed/${other.id}`,
+            link: postLink,
             date: other.createdAt,
             description: summary.length > 0 ? summary : content.length > 100 ? content.slice(0, 100) : content,
             content: contentHtml,
