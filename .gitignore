@@ -9,6 +9,7 @@ test.ts
 .env.production
 .wrangler
 wrangler.toml
+*.bak
 # Logs
 logs
 npm-debug.log*
