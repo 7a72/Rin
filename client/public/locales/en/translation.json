@@ -52,10 +52,7 @@
   "content": {
     "empty": "Content cannot be empty"
   },
-  "count": {
-    "pv": "Page View",
-    "uv": "Visitors"
-  },
+  "views": "Page View",
   "create": {
     "success": "Create Successfully",
     "title": "Create"
@@ -147,7 +144,7 @@
     },
     "counter": {
       "enable": {
-        "desc": "Enable statistics for article PV and UV",
+        "desc": "Enable statistics for article views",
         "title": "Enable traffic statistics"
       }
     },

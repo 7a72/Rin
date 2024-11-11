@@ -3,7 +3,7 @@ import Elysia, { t } from "elysia";
 import { XMLParser } from "fast-xml-parser";
 import html2md from 'html-to-md';
 import type { DB } from "../_worker";
-import { feeds, visits } from "../db/schema";
+import { feeds } from "../db/schema";
 import { setup } from "../setup";
 import { ClientConfig, PublicCache } from "../utils/cache";
 import { getDB } from "../utils/di";
@@ -165,7 +165,7 @@ export function FeedService() {
                         allowComment: t.Boolean()
                     })
                 })
-                .get('/:id', async ({ uid, admin, set, headers, params: { id } }) => {
+                .get('/:id', async ({ uid, admin, set, params: { id } }) => {
                     const id_num = parseInt(id);
                     const cache = PublicCache();
                     const cacheKey = `feed_${id}`;
@@ -197,30 +197,18 @@ export function FeedService() {
                     const { hashtags, ...other } = feed;
                     const hashtags_flatten = hashtags.map((f) => f.hashtag);
 
-
-                    // update visits
-                    const config = ClientConfig()
-                    const enableVisit = await config.getOrDefault('counter.enabled', true);
-                    let pv = 0;
-                    let uv = 0;
-                    if (enableVisit) {
-                        const ip = headers['cf-connecting-ip'] || headers['x-real-ip'] || "UNK"
-                        await db.insert(visits).values({
-                            feedId: feed.id,
-                            ip: ip,
-                        });
-                        const visit = await db.query.visits.findMany({
-                            where: eq(visits.feedId, feed.id),
-                            columns: { id: true, ip: true }
-                        });
-                        pv = visit.length;
-                        uv = new Set(visit.map((v) => v.ip)).size;
+                    // update views
+                    const newViews = (feed.views || 0) + 1;
+                    if (await ClientConfig().getOrDefault('counter.enabled', false)) {
+                        await db.update(feeds)
+                            .set({ views: newViews })
+                            .where(eq(feeds.id, feed.id));
                     }
+                    await cache.delete(cacheKey);
                     const data = {
                         ...other,
                         hashtags: hashtags_flatten,
-                        pv,
-                        uv
+                        views: newViews
                     };
                     return data;
                 })

@@ -15,15 +15,9 @@ export const feeds = sqliteTable("feeds", {
     uid: integer("uid").references(() => users.id).notNull(),
     allowComment: integer("allowComment").default(1).notNull(),
     status: text("status").default("publish").notNull(),
+    views: integer("views").default(0).notNull(),
     createdAt: created_at,
     updatedAt: updated_at,
-});
-
-export const visits = sqliteTable("visits", {
-    id: integer("id").primaryKey(),
-    feedId: integer("feed_id").references(() => feeds.id, { onDelete: 'cascade' }).notNull(),
-    ip: text("ip").notNull(),
-    createdAt: created_at,
 });
 
 export const info = sqliteTable("info", {

@@ -52,10 +52,7 @@
   "content": {
     "empty": "内容不能为空"
   },
-  "count": {
-    "pv": "浏览数",
-    "uv": "访客数"
-  },
+  "views": "浏览数",
   "create": {
     "success": "创建成功",
     "title": "创建"
@@ -147,7 +144,7 @@
     },
     "counter": {
       "enable": {
-        "desc": "启用统计文章 PV 与 UV 功能",
+        "desc": "启用统计文章浏览数功能",
         "title": "启用访问量统计"
       }
     },

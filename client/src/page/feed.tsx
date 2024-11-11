@@ -33,8 +33,7 @@ type Feed = {
     id: number;
     username: string;
   };
-  pv: number;
-  uv: number;
+  views: number;
   allowComment: number
 };
 
@@ -235,14 +234,9 @@ export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Elemen
                       )}
                     </div>
                     {counterEnabled && <p className='text-[12px] text-gray-400 font-normal link-line'>
-                      <span> {t("count.pv")} </span>
+                      <span> {t("views")} </span>
                       <span>
-                        {feed.pv}
-                      </span>
-                      <span> |</span>
-                      <span> {t("count.uv")} </span>
-                      <span>
-                        {feed.uv}
+                        {feed.views}
                       </span>
                     </p>}
                   </div>
