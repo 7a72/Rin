@@ -2,10 +2,7 @@ import "katex/dist/katex.min.css";
 import React, { cloneElement, isValidElement, useEffect, useMemo, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import {
-  base16AteliersulphurpoolLight,
-  vscDarkPlus,
-} from "react-syntax-highlighter/dist/esm/styles/prism";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeKatex from "rehype-katex";
 import rehypeRaw from "rehype-raw";
 import gfm from "remark-gfm";
@@ -17,8 +14,6 @@ import Counter from "yet-another-react-lightbox/plugins/counter";
 import Download from "yet-another-react-lightbox/plugins/download";
 import Zoom from "yet-another-react-lightbox/plugins/zoom";
 import "yet-another-react-lightbox/styles.css";
-import { useColorMode } from "../utils/darkModeUtils";
-
 
 const countNewlinesBeforeNode = (text: string, offset: number) => {
   let newlinesBefore = 0;
@@ -47,7 +42,6 @@ const isMarkdownImageLinkAtEnd = (text: string) => {
 };
 
 export function Markdown({ content }: { content: string }) {
-  const colorMode = useColorMode();
   const [index, setIndex] = React.useState(-1);
   const slides = useRef<SlideImage[]>();
 
@@ -136,11 +130,7 @@ export function Markdown({ content }: { content: string }) {
                   PreTag="div"
                   className="rounded"
                   language={language}
-                  style={
-                    colorMode === "dark"
-                      ? vscDarkPlus
-                      : base16AteliersulphurpoolLight
-                  }
+                  style={vscDarkPlus}
                   wrapLongLines={true}
                   codeTagProps={{ style: codeBlockStyle }}
                 >
