@@ -211,6 +211,7 @@
     "title": "更新"
   },
   "update$sth": "更新 {{sth}}",
+  "updated_at": "更新时间",
   "upload": {
     "failed": "上传失败",
     "failed$size": "上传失败，文件大小不能超过 {{size}} MB",

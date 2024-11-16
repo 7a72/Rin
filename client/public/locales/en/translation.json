@@ -211,6 +211,7 @@
     "title": "Update"
   },
   "update$sth": "Update {{sth}}",
+  "updated_at": "Updated at",
   "upload": {
     "failed": "Upload failed",
     "failed$size": "Upload failed, file size cannot exceed {{size}} MB",

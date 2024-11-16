@@ -106,7 +106,7 @@ export function FeedService() {
                         orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
                     }))
                 })
-                .post('/', async ({ admin, set, uid, body: { title, alias, content, summary, status, tags, property, createdAt, allowComment } }) => {
+                .post('/', async ({ admin, set, uid, body: { title, alias, content, summary, status, tags, property, createdAt, updatedAt, allowComment } }) => {
                     if (!admin) {
                         set.status = 403;
                         return 'Permission denied';
@@ -129,7 +129,8 @@ export function FeedService() {
                         set.status = 400;
                         return 'Content already exists';
                     }
-                    const date = createdAt ? new Date(createdAt) : new Date();
+                    const createdDate = createdAt ? new Date(createdAt) : new Date();
+                    const updatedDate = updatedAt ? new Date(updatedAt) : new Date();
                     const validStatuses = ['publish', 'draft', 'private'];
                     const finalStatus = status && validStatuses.includes(status) ? status : 'publish';
                     const result = await db.insert(feeds).values({
@@ -138,8 +139,8 @@ export function FeedService() {
                         summary,
                         uid,
                         alias,
-                        createdAt: date,
-                        updatedAt: date,
+                        createdAt: createdDate,
+                        updatedAt: updatedDate,
                         status: finalStatus,
                         property: property || 'post',
                         allowComment: allowComment ? 1 : 0
@@ -161,6 +162,7 @@ export function FeedService() {
                         status: t.String(),
                         property: t.String(),
                         createdAt: t.Optional(t.Date()),
+                        updatedAt: t.Optional(t.Date()),
                         tags: t.Array(t.String()),
                         allowComment: t.Boolean()
                     })
@@ -217,7 +219,7 @@ export function FeedService() {
                     set,
                     uid,
                     params: { id },
-                    body: { title, content, summary, alias, status, top, tags, createdAt, property, allowComment }
+                    body: { title, content, summary, alias, status, top, tags, createdAt, updatedAt, property, allowComment }
                 }) => {
                     const id_num = parseInt(id);
                     const feed = await db.query.feeds.findFirst({
@@ -243,7 +245,7 @@ export function FeedService() {
                         property: property || 'post',
                         allowComment: allowComment ? 1 : 0,
                         createdAt: createdAt ? new Date(createdAt) : undefined,
-                        updatedAt: new Date()
+                        updatedAt: updatedAt ? new Date(updatedAt) : undefined
                     }).where(eq(feeds.id, id_num));
                     if (tags) {
                         await bindTagToPost(db, id_num, tags);
@@ -257,6 +259,7 @@ export function FeedService() {
                         content: t.Optional(t.String()),
                         summary: t.Optional(t.String()),
                         createdAt: t.Optional(t.Date()),
+                        updatedAt: t.Optional(t.Date()),
                         tags: t.Optional(t.Array(t.String())),
                         status: t.String(),
                         property: t.String(),

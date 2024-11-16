@@ -211,6 +211,7 @@
     "title": "更新"
   },
   "update$sth": "{{sth}} を更新",
+  "updated_at": "更新日",
   "upload": {
     "failed": "アップロードに失敗しました",
     "failed$size": "アップロードに失敗しました。ファイルサイズは{{size}} MBを超えてはなりません",

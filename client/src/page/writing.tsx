@@ -27,20 +27,22 @@ async function publish({
   tags,
   status,
   property,
-  createdAt,
   allowComment,
+  createdAt,
+  updatedAt,
   onCompleted,
   showAlert
 }: {
   title: string;
+  alias?: string;
   content: string;
   summary: string;
   tags: string[];
   status: string;
   property: string;
-  alias?: string;
-  createdAt?: Date;
   allowComment: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
   onCompleted?: () => void;
   showAlert: ShowAlertType;
 }) {
@@ -54,8 +56,9 @@ async function publish({
       tags,
       status,
       property,
-      createdAt,
       allowComment,
+      createdAt,
+      updatedAt,
     },
     {
       headers: headersWithAuth(),
@@ -84,8 +87,9 @@ async function update({
   tags,
   status,
   property,
-  createdAt,
   allowComment,
+  createdAt,
+  updatedAt,
   onCompleted,
   showAlert
 }: {
@@ -97,8 +101,9 @@ async function update({
   tags?: string[];
   status: string;
   property: string;
-  createdAt?: Date;
   allowComment: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
   onCompleted?: () => void;
   showAlert: ShowAlertType;
 }) {
@@ -112,8 +117,9 @@ async function update({
       tags,
       status,
       property,
-      createdAt,
       allowComment,
+      createdAt,
+      updatedAt,
     },
     {
       headers: headersWithAuth(),
@@ -175,6 +181,7 @@ export function WritingPage({ id }: { id?: number }) {
   const [content, setContent] = cache.useCache("content", "");
   const [allowComment, setAllowComment] = useState(true);
   const [createdAt, setCreatedAt] = useState<Date | undefined>(new Date());
+  const [updatedAt, setUpdatedAt] = useState<Date | undefined>(new Date());
   const [preview, setPreview] = useCache<'edit' | 'preview' | 'comparison'>("preview", 'edit');
   const [uploading, setUploading] = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -191,14 +198,15 @@ export function WritingPage({ id }: { id?: number }) {
       update({
         id,
         title,
+        alias,
         content,
         summary,
-        alias,
         tags: tagsplit,
         status,
         property,
-        createdAt,
         allowComment,
+        createdAt,
+        updatedAt,
         onCompleted: () => {
           setPublishing(false)
         },
@@ -216,14 +224,15 @@ export function WritingPage({ id }: { id?: number }) {
       setPublishing(true)
       publish({
         title,
+        alias,
         content,
         summary,
         tags: tagsplit,
         status,
         property,
-        alias,
-        createdAt,
         allowComment,
+        createdAt,
+        updatedAt,
         onCompleted: () => {
           setPublishing(false)
         },
@@ -313,6 +322,7 @@ export function WritingPage({ id }: { id?: number }) {
             if (property === "post") setProperty(data.property as "post" | "page" || "post");
             setAllowComment(data.allowComment === 1 );
             setCreatedAt(new Date(data.createdAt));
+            setUpdatedAt(new Date(data.updatedAt));
           }
         });
     }
@@ -405,6 +415,12 @@ export function WritingPage({ id }: { id?: number }) {
               {t('created_at')}
             </p>
             <Calendar value={createdAt} onChange={(e) => setCreatedAt(e.value || undefined)} showTime touchUI hourFormat="24" />
+          </div>
+          <div className="select-none flex flex-row justify-between items-center mt-4 mb-2 px-4">
+            <p className="break-keep mr-2">
+              {t('updated_at')}
+            </p>
+            <Calendar value={updatedAt} onChange={(e) => setUpdatedAt(e.value || undefined)} showTime touchUI hourFormat="24" />
           </div>
         </div>
       </>
