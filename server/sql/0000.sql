@@ -23,10 +23,13 @@ CREATE TABLE IF NOT EXISTS `feeds` (
 	`alias` text,
 	`title` text,
 	`content` text NOT NULL,
-    `summary` text DEFAULT '' NOT NULL,
-	`listed` integer DEFAULT 1 NOT NULL,
-	`draft` integer DEFAULT 1 NOT NULL,
+	`summary` text DEFAULT '' NOT NULL,
+	`allow_comment` TINYINT DEFAULT 1 NOT NULL,
+	`status` TEXT CHECK (status IN ('publish', 'draft', 'private')) DEFAULT 'publish' NOT NULL,
+	`property` TEXT CHECK (property IN ('post', 'page')) DEFAULT 'post' NOT NULL,
+	`views` INTEGER DEFAULT 0 NOT NULL,
 	`uid` integer NOT NULL,
+	`top` INTEGER DEFAULT 0
 	`created_at` integer DEFAULT (unixepoch()) NOT NULL,
 	`updated_at` integer DEFAULT (unixepoch()) NOT NULL,
 	FOREIGN KEY (`uid`) REFERENCES `users`(`id`) ON UPDATE no action ON DELETE no action

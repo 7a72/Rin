@@ -13,7 +13,7 @@ export const feeds = sqliteTable("feeds", {
     property: text("property").default("post").notNull(),
     top: integer("top").default(0).notNull(),
     uid: integer("uid").references(() => users.id).notNull(),
-    allowComment: integer("allowComment").default(1).notNull(),
+    allowComment: integer("allow_comment").default(1).notNull(),
     status: text("status").default("publish").notNull(),
     views: integer("views").default(0).notNull(),
     createdAt: created_at,
