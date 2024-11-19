@@ -1,6 +1,6 @@
 import { useLocation } from "wouter";
 
-export function HashTag({ name }: { name: string }) {
+export function MetaTag({ name }: { name: string }) {
     const [_, setLocation] = useLocation();
     return (
         <button

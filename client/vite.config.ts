@@ -1,17 +1,17 @@
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import react from "@vitejs/plugin-react-swc";
 import { visualizer } from "rollup-plugin-visualizer";
+import { defineConfig, loadEnv } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '');
-  return {
-    define: {
-      'process.env': JSON.stringify(env)
-    },
-    plugins: [
-      react(),
-      visualizer({ open: true }) // 自动开启分析页面
-    ],
-  }
-})
+    const env = loadEnv(mode, process.cwd(), "");
+    return {
+        define: {
+            "process.env": JSON.stringify(env),
+        },
+        plugins: [
+            react(),
+            visualizer({ open: true }), // 自动开启分析页面
+        ],
+    };
+});

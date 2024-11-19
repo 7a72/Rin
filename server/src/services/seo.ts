@@ -7,26 +7,26 @@ export function SEOService() {
     const env: Env = getEnv();
     const endpoint = env.S3_ENDPOINT;
     const accessHost = env.S3_ACCESS_HOST || endpoint;
-    const folder = env.S3_CACHE_FOLDER || 'cache/';
+    const folder = env.S3_CACHE_FOLDER || "cache/";
     return new Elysia({ aot: false })
-        .get('/seo/*', async ({ set, params, query }) => {
+        .get("/seo/*", async ({ set, params, query }) => {
             if (!accessHost) {
                 set.status = 500;
-                return 'S3_ACCESS_HOST is not defined'
+                return "S3_ACCESS_HOST is not defined";
             }
-            let url = params['*'];
+            let url = params["*"];
             // query concat
             for (const key in query) {
                 url += `&${key}=${query[key]}`;
             }
-            if (url.endsWith('/') || url === '') {
-                url += 'index.html';
+            if (url.endsWith("/") || url === "") {
+                url += "index.html";
             }
             const key = path.join(folder, url);
             try {
                 const url = `${accessHost}/${key}`;
                 console.log(`Fetching ${url}`);
-                const response = await fetch(new Request(url))
+                const response = await fetch(new Request(url));
                 return new Response(response.body, {
                     status: response.status,
                     statusText: response.statusText,
@@ -36,5 +36,5 @@ export function SEOService() {
                 set.status = 500;
                 return e.message;
             }
-        })
+        });
 }

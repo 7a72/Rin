@@ -1,227 +1,227 @@
 {
-  "about": {
-    "notfound": "Set the article alias to `about` to create an about page",
-    "title": "About"
-  },
-  "alert": "Alert",
-  "allow_comment": "Enable Comments",
-  "alias": "Alias",
-  "article": {
-    "delete": {
-      "confirm": "Are you sure you want to delete this article?",
-      "title": "Delete Article"
+    "about": {
+        "notfound": "Set the article alias to `about` to create an about page",
+        "title": "About"
     },
-    "search": {
-      "placeholder": "Please enter keywords",
-      "title": "Search",
-      "title$keyword": "Search: {{keyword}}"
-    },
-    "title": "Articles",
-    "top": {
-      "confirm": "Are you sure you want to top this article?",
-      "success": "Topped successfully",
-      "title": "Top"
-    },
-    "total_short$count_one": "{{count}} articles",
-    "total_short$count_other": "{{count}} articles",
-    "total$count_one": "{{count}} articles in total",
-    "total$count_other": "{{count}} articles in total",
-    "untop": {
-      "confirm": "Are you sure you want to untop this article?",
-      "success": "Untopped successfully",
-      "title": "Untop"
-    }
-  },
-  "avatar": {
-    "url": "Avatar URL"
-  },
-  "cancel": "Cancel",
-  "clear": "Clear",
-  "close": "Close",
-  "comment": {
-    "empty": "Comment cannot be empty",
-    "placeholder": {
-      "title": "Say something..."
-    },
-    "submit": "Submit Comment",
-    "success": "Comment successful",
-    "title": "Comment"
-  },
-  "comparison": "Comparison",
-  "confirm": "Confirm",
-  "content": {
-    "empty": "Content cannot be empty"
-  },
-  "views": "Page View",
-  "create": {
-    "success": "Create Successfully",
-    "title": "Create"
-  },
-  "created_at": "Published at",
-  "delete": {
-    "comment": {
-      "confirm": "Are you sure you want to delete this comment?",
-      "title": "Delete Comment"
-    },
-    "confirm": "Are you sure you want to delete?",
-    "success": "Deleted successfully",
-    "title": "Delete"
-  },
-  "description": "Description",
-  "draft": "Draft",
-  "draft_bin": "Draft Bin",
-  "edit": "Edit",
-  "error": {
-    "api_url": "API_URL in Pages environment variables should be the Worker address. Please check if API_URL in Pages environment variables is correct.",
-    "api_url_slash": "API_URL in Pages environment variables should be the Worker address. Please check if API_URL in Pages environment variables is correct and ensure API_URL does not end with a slash (/).",
-    "github_callback": "GitHub OAuth callback URL should be `https://<Worker address>/user/github/callback`. Please check if the GitHub OAuth callback URL is correct."
-  },
-  "feed_card": {
-    "published$time": "Published at {{time}}",
-    "updated$time": "Updated at {{time}}"
-  },
-  "footer": {
-    "rss": "RSS Subscription Link"
-  },
-  "friends": {
-    "apply": "Apply for Friend Link",
-    "create": "Create Friend Link",
-    "left": "Left temporarily",
-    "my_apply": "My Applications",
-    "review": {
-      "accepted": "Accepted",
-      "rejected": "Rejected",
-      "waiting": "Pending review"
-    },
-    "title": "Friends"
-  },
-  "github_login": "Github Login",
-  "hashtags": "Hashtags",
-  "home": "Home",
-  "index": {
-    "back": "Back to Home",
-    "empty": {
-      "title": "Index is empty"
-    },
-    "title": "Index"
-  },
-  "login": {
-    "oauth_only": "Please log in to continue",
-    "password": {
-      "placeholder": "Please enter your password"
-    },
-    "required": "Please log in to continue",
-    "title": "Login",
-    "username": {
-      "placeholder": "Please enter your username"
-    }
-  },
-  "next": "Next Page",
-  "page": "Page",
-  "post": "Post",
-  "preview": "Preview",
-  "previous": "Previous Page",
-  "private": "Hide",
-  "property": "Type",
-  "published": "Publish",
-  "publish": {
-    "success": "Publish successful",
-    "title": "Publish"
-  },
-  "reload": "Retry",
-  "save": "Save",
-  "settings": {
-    "cache": {
-      "clear": {
-        "confirm": {
-          "desc": "Cache is used to reduce database access frequency, please try clearing cache only if there are cache errors.",
-          "title": "Confirm to clear cache?"
+    "alert": "Alert",
+    "allow_comment": "Enable Comments",
+    "alias": "Alias",
+    "article": {
+        "delete": {
+            "confirm": "Are you sure you want to delete this article?",
+            "title": "Delete Article"
         },
-        "desc": "Clear all cache files",
-        "title": "Clear Cache"
-      },
-      "clear_failed$message": "Failed to clear cache: {{message}}"
+        "search": {
+            "placeholder": "Please enter keywords",
+            "title": "Search",
+            "title$keyword": "Search: {{keyword}}"
+        },
+        "title": "Articles",
+        "top": {
+            "confirm": "Are you sure you want to top this article?",
+            "success": "Topped successfully",
+            "title": "Top"
+        },
+        "total_short$count_one": "{{count}} articles",
+        "total_short$count_other": "{{count}} articles",
+        "total$count_one": "{{count}} articles in total",
+        "total$count_other": "{{count}} articles in total",
+        "untop": {
+            "confirm": "Are you sure you want to untop this article?",
+            "success": "Untopped successfully",
+            "title": "Untop"
+        }
     },
-    "counter": {
-      "enable": {
-        "desc": "Enable statistics for article views",
-        "title": "Enable traffic statistics"
-      }
+    "avatar": {
+        "url": "Avatar URL"
     },
-    "favicon": {
-      "desc": "Set the icon (Favicon) displayed in the browser's address bar",
-      "title": "Favicon"
+    "cancel": "Cancel",
+    "categories": "Category",
+    "clear": "Clear",
+    "close": "Close",
+    "comment": {
+        "empty": "Comment cannot be empty",
+        "placeholder": {
+            "title": "Say something..."
+        },
+        "submit": "Submit Comment",
+        "success": "Comment successful",
+        "title": "Comment"
+    },
+    "comparison": "Comparison",
+    "confirm": "Confirm",
+    "content": {
+        "empty": "Content cannot be empty"
+    },
+    "views": "Page View",
+    "create": {
+        "success": "Create Successfully",
+        "title": "Create"
+    },
+    "created_at": "Published at",
+    "delete": {
+        "comment": {
+            "confirm": "Are you sure you want to delete this comment?",
+            "title": "Delete Comment"
+        },
+        "confirm": "Are you sure you want to delete?",
+        "success": "Deleted successfully",
+        "title": "Delete"
+    },
+    "description": "Description",
+    "draft": "Draft",
+    "draft_bin": "Draft Bin",
+    "edit": "Edit",
+    "error": {
+        "api_url": "API_URL in Pages environment variables should be the Worker address. Please check if API_URL in Pages environment variables is correct.",
+        "api_url_slash": "API_URL in Pages environment variables should be the Worker address. Please check if API_URL in Pages environment variables is correct and ensure API_URL does not end with a slash (/).",
+        "github_callback": "GitHub OAuth callback URL should be `https://<Worker address>/user/github/callback`. Please check if the GitHub OAuth callback URL is correct."
+    },
+    "feed_card": {
+        "published$time": "Published at {{time}}",
+        "updated$time": "Updated at {{time}}"
     },
     "footer": {
-      "desc": "Set the footer content of the site (HTML)",
-      "title": "Footer"
+        "rss": "RSS Subscription Link"
     },
-    "friend": {
-      "apply": {
-        "desc": "Allow other users to apply for friend links (requires review)",
-        "title": "Friend Link Application"
-      },
-      "health": {
-        "desc": "Enable accessibility check for friends' links",
-        "title": "Friend Link Health Monitoring",
-        "ua": {
-          "desc": "Set the User-Agent used for friend link accessibility check, default 'Rin-Check/1.0'",
-          "title": "Friend Link Health Monitoring User-Agent"
+    "friends": {
+        "apply": "Apply for Friend Link",
+        "create": "Create Friend Link",
+        "left": "Left temporarily",
+        "my_apply": "My Applications",
+        "review": {
+            "accepted": "Accepted",
+            "rejected": "Rejected",
+            "waiting": "Pending review"
+        },
+        "title": "Friends"
+    },
+    "github_login": "Github Login",
+    "home": "Home",
+    "index": {
+        "back": "Back to Home",
+        "empty": {
+            "title": "Index is empty"
+        },
+        "title": "Index"
+    },
+    "login": {
+        "oauth_only": "Please log in to continue",
+        "password": {
+            "placeholder": "Please enter your password"
+        },
+        "required": "Please log in to continue",
+        "title": "Login",
+        "username": {
+            "placeholder": "Please enter your username"
         }
-      },
-      "title": "Friend Link Settings"
     },
-    "get_config_failed$message": "Failed to get configuration, {{message}}",
-    "import_failed$message": "Import failed, {{message}}",
-    "import_result": "Import Result",
-    "import_skipped": "Import Skipped",
-    "import_skipped_item$title$reason": "《{{title}}》- {{reason}}",
-    "import_success$success$skipped": "Import successful, {{success}} articles imported, {{skipped}} articles skipped",
-    "other": {
-      "title": "Other Settings"
+    "next": "Next Page",
+    "page": "Page",
+    "post": "Post",
+    "preview": "Preview",
+    "previous": "Previous Page",
+    "private": "Hide",
+    "property": "Type",
+    "published": "Publish",
+    "publish": {
+        "success": "Publish successful",
+        "title": "Publish"
     },
-    "rss": {
-      "desc": "Enable RSS subscription link at the site footer",
-      "title": "RSS Subscription Link"
+    "reload": "Retry",
+    "save": "Save",
+    "settings": {
+        "cache": {
+            "clear": {
+                "confirm": {
+                    "desc": "Cache is used to reduce database access frequency, please try clearing cache only if there are cache errors.",
+                    "title": "Confirm to clear cache?"
+                },
+                "desc": "Clear all cache files",
+                "title": "Clear Cache"
+            },
+            "clear_failed$message": "Failed to clear cache: {{message}}"
+        },
+        "counter": {
+            "enable": {
+                "desc": "Enable statistics for article views",
+                "title": "Enable traffic statistics"
+            }
+        },
+        "favicon": {
+            "desc": "Set the icon (Favicon) displayed in the browser's address bar",
+            "title": "Favicon"
+        },
+        "footer": {
+            "desc": "Set the footer content of the site (HTML)",
+            "title": "Footer"
+        },
+        "friend": {
+            "apply": {
+                "desc": "Allow other users to apply for friend links (requires review)",
+                "title": "Friend Link Application"
+            },
+            "health": {
+                "desc": "Enable accessibility check for friends' links",
+                "title": "Friend Link Health Monitoring",
+                "ua": {
+                    "desc": "Set the User-Agent used for friend link accessibility check, default 'Rin-Check/1.0'",
+                    "title": "Friend Link Health Monitoring User-Agent"
+                }
+            },
+            "title": "Friend Link Settings"
+        },
+        "get_config_failed$message": "Failed to get configuration, {{message}}",
+        "import_failed$message": "Import failed, {{message}}",
+        "import_result": "Import Result",
+        "import_skipped": "Import Skipped",
+        "import_skipped_item$title$reason": "《{{title}}》- {{reason}}",
+        "import_success$success$skipped": "Import successful, {{success}} articles imported, {{skipped}} articles skipped",
+        "other": {
+            "title": "Other Settings"
+        },
+        "rss": {
+            "desc": "Enable RSS subscription link at the site footer",
+            "title": "RSS Subscription Link"
+        },
+        "title": "Settings",
+        "update_failed$message": "Update failed: {{message}}",
+        "wordpress": {
+            "desc": "Upload the XML file exported from WordPress",
+            "title": "Import from WordPress"
+        }
     },
-    "title": "Settings",
-    "update_failed$message": "Update failed: {{message}}",
-    "wordpress": {
-      "desc": "Upload the XML file exported from WordPress",
-      "title": "Import from WordPress"
-    }
-  },
-  "sitename": "Site Name",
-  "status": "Status",
-  "summary": "Summary",
-  "tags": "Tags",
-  "timeline": "Timeline",
-  "title": "Title",
-  "title_empty": "Title cannot be empty",
-  "top": {
-    "title": "Top"
-  },
-  "unlisted": "Hidden",
-  "untitled": "Untitled",
-  "untop": {
-    "title": "Untop"
-  },
-  "update": {
-    "success": "Update successful",
-    "title": "Update"
-  },
-  "update$sth": "Update {{sth}}",
-  "updated_at": "Updated at",
-  "upload": {
-    "failed": "Upload failed",
-    "failed$size": "Upload failed, file size cannot exceed {{size}} MB",
-    "title": "Upload"
-  },
-  "uploading": "Uploading...",
-  "url": "Site URL",
-  "visible": {
-    "self_only": "Visible to self only"
-  },
-  "writing": "Writing",
-  "year$year": "{{year}}"
+    "sitename": "Site Name",
+    "status": "Status",
+    "summary": "Summary",
+    "tags": "Tags",
+    "timeline": "Timeline",
+    "title": "Title",
+    "title_empty": "Title cannot be empty",
+    "top": {
+        "title": "Top"
+    },
+    "unlisted": "Hidden",
+    "untitled": "Untitled",
+    "untop": {
+        "title": "Untop"
+    },
+    "update": {
+        "success": "Update successful",
+        "title": "Update"
+    },
+    "update$sth": "Update {{sth}}",
+    "updated_at": "Updated at",
+    "upload": {
+        "failed": "Upload failed",
+        "failed$size": "Upload failed, file size cannot exceed {{size}} MB",
+        "title": "Upload"
+    },
+    "uploading": "Uploading...",
+    "url": "Site URL",
+    "visible": {
+        "self_only": "Visible to self only"
+    },
+    "writing": "Writing",
+    "year$year": "{{year}}"
 }

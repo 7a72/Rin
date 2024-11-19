@@ -15,7 +15,7 @@ export function createS3Client() {
         forcePathStyle: forcePathStyle,
         credentials: {
             accessKeyId: accessKeyId,
-            secretAccessKey: secretAccessKey
+            secretAccessKey: secretAccessKey,
         },
     });
 }

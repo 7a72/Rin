@@ -9,7 +9,9 @@ export type Keys =
     | "alias"
     | "property"
     | "preview"
-    ;
+    | "categories" // Added categories to the Keys type
+;
+
 const keys: Keys[] = [
     "title",
     "content",
@@ -19,6 +21,7 @@ const keys: Keys[] = [
     "alias",
     "property",
     "preview",
+    "categories", // Added categories to the keys array
 ];
 
 export class Cache {
@@ -46,11 +49,11 @@ export class Cache {
         const setCache = (value: T) => {
             this.set(key, value as string);
             setValue(value);
-        }
+        };
         return [value, setCache] as const;
     }
 }
 
 export function useCache<T>(key: Keys, initialValue: T) {
-    return new Cache().useCache(key, initialValue)
+    return new Cache().useCache(key, initialValue);
 }

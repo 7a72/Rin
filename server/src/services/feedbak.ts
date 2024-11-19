@@ -1,12 +1,14 @@
 import { and, count, desc, eq, like, or } from "drizzle-orm";
 import Elysia, { t } from "elysia";
+import { XMLParser } from "fast-xml-parser";
+import html2md from "html-to-md";
 import type { DB } from "../_worker";
 import { feeds } from "../db/schema";
 import { setup } from "../setup";
 import { ClientConfig, PublicCache } from "../utils/cache";
 import { getDB } from "../utils/di";
 import { extractImage } from "../utils/image";
-import { bindMetasToPost } from "./meta";
+import { bindTagToPost } from "./tag";
 
 export function FeedService() {
     const db: DB = getDB();
@@ -47,30 +49,23 @@ export function FeedService() {
                             property: false,
                         },
                         with: {
-                            metas: {
+                            hashtags: {
                                 columns: {},
                                 with: {
-                                    meta: {
-                                        columns: {
-                                            id: true,
-                                            name: true,
-                                            type: true,
-                                        },
+                                    hashtag: {
+                                        columns: { id: true, name: true },
                                     },
                                 },
                             },
                             user: {
-                                columns: {
-                                    id: true,
-                                    username: true,
-                                    avatar: true,
-                                },
+                                columns: { id: true, username: true, avatar: true },
                             },
                         },
-                        orderBy: [desc(feeds.top), desc(feeds.createdAt)],
+                        orderBy: [desc(feeds.top), desc(feeds.createdAt), desc(feeds.updatedAt)],
                         offset: page_num * limit_num,
                         limit: limit_num + 1,
-                    })).map(({ content, metas, summary, ...other }) => {
+                    })).map(({ content, hashtags, summary, ...other }) => {
+                        // 提取首图
                         const avatar = extractImage(content);
                         return {
                             summary: summary.length > 0
@@ -78,13 +73,7 @@ export function FeedService() {
                                 : content.length > 100
                                 ? content.slice(0, 100)
                                 : content,
-                            // metas: metas.map(({ meta }) => meta),
-                            tags: metas
-                                .filter(({ meta }) => meta.type === "tag")
-                                .map(({ meta }) => meta),
-                            categories: metas
-                                .filter(({ meta }) => meta.type === "category")
-                                .map(({ meta }) => meta),
+                            hashtags: hashtags.map(({ hashtag }) => hashtag),
                             avatar,
                             ...other,
                         };
@@ -137,7 +126,6 @@ export function FeedService() {
                                 summary,
                                 status,
                                 tags,
-                                categories,
                                 property,
                                 createdAt,
                                 updatedAt,
@@ -167,7 +155,8 @@ export function FeedService() {
                             set.status = 400;
                             return "Content already exists";
                         }
-
+                        const createdDate = createdAt ? new Date(createdAt) : new Date();
+                        const updatedDate = updatedAt ? new Date(updatedAt) : new Date();
                         const validStatuses = ["publish", "draft", "private"];
                         const finalStatus = status && validStatuses.includes(status) ? status : "publish";
                         const result = await db.insert(feeds).values({
@@ -176,30 +165,20 @@ export function FeedService() {
                             summary,
                             uid,
                             alias,
-                            createdAt: createdAt ? new Date(createdAt) : new Date(),
-                            updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
+                            createdAt: createdDate,
+                            updatedAt: updatedDate,
                             status: finalStatus,
                             property: property || "post",
                             allowComment: allowComment ? 1 : 0,
                         }).returning({ insertedId: feeds.id });
-
+                        await bindTagToPost(db, result[0].insertedId, tags);
+                        await PublicCache().deletePrefix("feeds_");
                         if (result.length === 0) {
                             set.status = 500;
                             return "Failed to insert";
+                        } else {
+                            return result[0];
                         }
-
-                        const feedId = result[0].insertedId;
-
-                        // 分别处理标签和分类
-                        if (tags && tags.length > 0) {
-                            await bindMetasToPost(db, feedId, tags, "tag");
-                        }
-                        if (categories && categories.length > 0) {
-                            await bindMetasToPost(db, feedId, categories, "category");
-                        }
-
-                        await PublicCache().deletePrefix("feeds_");
-                        return result[0];
                     },
                     {
                         body: t.Object({
@@ -212,7 +191,6 @@ export function FeedService() {
                             createdAt: t.Optional(t.Date()),
                             updatedAt: t.Optional(t.Date()),
                             tags: t.Array(t.String()),
-                            categories: t.Optional(t.Array(t.String())),
                             allowComment: t.Boolean(),
                         }),
                     },
@@ -224,15 +202,11 @@ export function FeedService() {
                     const feed = await cache.getOrSet(cacheKey, () => (db.query.feeds.findFirst({
                         where: or(eq(feeds.id, id_num), eq(feeds.alias, id)),
                         with: {
-                            metas: {
+                            hashtags: {
                                 columns: {},
                                 with: {
-                                    meta: {
-                                        columns: {
-                                            id: true,
-                                            name: true,
-                                            type: true,
-                                        },
+                                    hashtag: {
+                                        columns: { id: true, name: true },
                                     },
                                 },
                             },
@@ -251,14 +225,8 @@ export function FeedService() {
                         return "Permission denied";
                     }
 
-                    const { metas, ...other } = feed;
-
-                    const tags = metas
-                        .filter(({ meta }) => meta.type === "tag")
-                        .map(({ meta }) => meta);
-                    const categories = metas
-                        .filter(({ meta }) => meta.type === "category")
-                        .map(({ meta }) => meta);
+                    const { hashtags, ...other } = feed;
+                    const hashtags_flatten = hashtags.map((f) => f.hashtag);
 
                     // update views
                     const newViews = (feed.views || 0) + 1;
@@ -270,8 +238,7 @@ export function FeedService() {
                     await cache.delete(cacheKey);
                     const data = {
                         ...other,
-                        tags: tags,
-                        categories: categories,
+                        hashtags: hashtags_flatten,
                         views: newViews,
                     };
                     return data;
@@ -289,7 +256,6 @@ export function FeedService() {
                         status,
                         top,
                         tags,
-                        categories,
                         createdAt,
                         updatedAt,
                         property,
@@ -323,10 +289,7 @@ export function FeedService() {
                         updatedAt: updatedAt ? new Date(updatedAt) : undefined,
                     }).where(eq(feeds.id, id_num));
                     if (tags) {
-                        await bindMetasToPost(db, id_num, tags, "tag");
-                    }
-                    if (categories) {
-                        await bindMetasToPost(db, id_num, categories, "category");
+                        await bindTagToPost(db, id_num, tags);
                     }
                     await clearFeedCache(id_num, feed.alias, alias || null);
                     return "Updated";
@@ -339,7 +302,6 @@ export function FeedService() {
                         createdAt: t.Optional(t.Date()),
                         updatedAt: t.Optional(t.Date()),
                         tags: t.Optional(t.Array(t.String())),
-                        categories: t.Optional(t.Array(t.String())),
                         status: t.String(),
                         property: t.String(),
                         top: t.Optional(t.Integer()),
@@ -419,15 +381,11 @@ export function FeedService() {
                         property: false,
                     },
                     with: {
-                        metas: {
+                        hashtags: {
                             columns: {},
                             with: {
-                                meta: {
-                                    columns: {
-                                        id: true,
-                                        name: true,
-                                        type: true,
-                                    },
+                                hashtag: {
+                                    columns: { id: true, name: true },
                                 },
                             },
                         },
@@ -436,17 +394,10 @@ export function FeedService() {
                         },
                     },
                     orderBy: [desc(feeds.createdAt), desc(feeds.updatedAt)],
-                }))).map(({ content, metas, summary, ...other }) => {
-                    const tags = metas
-                        .filter(({ meta }) => meta.type === "tag")
-                        .map(({ meta }) => meta);
-                    const categories = metas
-                        .filter(({ meta }) => meta.type === "category")
-                        .map(({ meta }) => meta);
+                }))).map(({ content, hashtags, summary, ...other }) => {
                     return {
                         summary: summary.length > 0 ? summary : content.length > 100 ? content.slice(0, 100) : content,
-                        tags,
-                        categories,
+                        hashtags: hashtags.map(({ hashtag }) => hashtag),
                         ...other,
                     };
                 });
@@ -474,14 +425,113 @@ export function FeedService() {
                 page: t.Optional(t.Numeric()),
                 limit: t.Optional(t.Numeric()),
             }),
+        })
+        .post("wp", async ({ set, admin, body: { data } }) => {
+            if (!admin) {
+                set.status = 403;
+                return "Permission denied";
+            }
+            if (!data) {
+                set.status = 400;
+                return "Data is required";
+            }
+            const xml = await data.text();
+            const parser = new XMLParser();
+            const result = await parser.parse(xml);
+            const items = result.rss.channel.item;
+            if (!items) {
+                set.status = 404;
+                return "No items found";
+            }
+            const feedItems: FeedItem[] = items?.map((item: any) => {
+                const createdAt = new Date(item?.["wp:post_date"]);
+                const updatedAt = new Date(item?.["wp:post_modified"]);
+                const contentHtml = item?.["content:encoded"];
+                const content = html2md(contentHtml);
+                const summary = content.length > 100 ? content.slice(0, 100) : content;
+                let tags = item?.["category"];
+                if (tags && Array.isArray(tags)) {
+                    tags = tags.map((tag: any) => tag + "");
+                } else if (tags && typeof tags === "string") {
+                    tags = [tags];
+                }
+                let status;
+                if (item?.["wp:status"] === "publish") {
+                    status = "publish";
+                } else if (item?.["wp:status"] === "private") {
+                    status = "private";
+                } else {
+                    status = "draft";
+                }
+                return {
+                    title: item.title,
+                    summary,
+                    content,
+                    status,
+                    createdAt,
+                    updatedAt,
+                    tags,
+                };
+            });
+            let success = 0;
+            let skipped = 0;
+            let skippedList: { title: string; reason: string }[] = [];
+            for (const item of feedItems) {
+                if (!item.content) {
+                    skippedList.push({ title: item.title, reason: "no content" });
+                    skipped++;
+                    continue;
+                }
+                const exist = await db.query.feeds.findFirst({
+                    where: eq(feeds.content, item.content),
+                });
+                if (exist) {
+                    skippedList.push({ title: item.title, reason: "content exists" });
+                    skipped++;
+                    continue;
+                }
+                const result = await db.insert(feeds).values({
+                    title: item.title,
+                    content: item.content,
+                    summary: item.summary,
+                    uid: 1,
+                    status: item.status,
+                    property: "post",
+                    createdAt: item.createdAt,
+                    updatedAt: item.updatedAt,
+                }).returning({ insertedId: feeds.id });
+                if (item.tags) {
+                    await bindTagToPost(db, result[0].insertedId, item.tags);
+                }
+                success++;
+            }
+            PublicCache().deletePrefix("feeds_");
+            return {
+                success,
+                skipped,
+                skippedList,
+            };
+        }, {
+            body: t.Object({
+                data: t.File(),
+            }),
         });
 }
+
+type FeedItem = {
+    title: string;
+    summary: string;
+    content: string;
+    status: string;
+    createdAt: Date;
+    updatedAt: Date;
+    tags?: string[];
+};
 
 async function clearFeedCache(id: number, alias: string | null, newAlias: string | null) {
     const cache = PublicCache();
     await cache.deletePrefix("feeds_");
     await cache.deletePrefix("search_");
-    await cache.deletePrefix("meta_");
     await cache.delete(`feed_${id}`, false);
     if (alias === newAlias) return;
     if (alias) {

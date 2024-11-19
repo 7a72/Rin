@@ -74,9 +74,9 @@ S3_SECRET_ACCESS_KEY=<你的S3SecretAccessKey>
 
 > [!TIP]
 > 先简单介绍一下前端与后端的关系，前端是一个静态页面，托管于 Cloudflare Pages上，前端本质上只是一堆不会变化的文件和代码，并没有你的文章数据之类的内容，想要实现如登录，写文章，评论，获取文章列表和内容、评论列表等逻辑还需要与后端进行数据交换；
-> 
+>
 > 后端负责处理具体的逻辑，在本项目中后端运行在 Cloudflare Workers 上，前端通过 API 与后端通信，后端通过 Cloudflare D1 保存文章等数据，通过 Cloudflare R2 存储文章中的图片
-> 
+>
 > 下文提到的前端与后端你可以分别等价代换为 Cloudflare Pages 与 Cloudflare Workers，当提到说需要前端地址或者后端地址时，即为 Cloudflare Pages 地址或 Cloudflare Workers 地址，你可以在 Cloudflare 控制面板中通过少量的操作找到这两个地址，如下面的截图所示：
 > 前端（Pages）的地址在 `Workers 和 Pages` > 你的 Pages 项目 > `部署` 中可以找到：
 > ![图片](https://github.com/openRin/Rin/assets/36541432/d9dcc5f2-6930-4487-af4b-0ab52e948114)
@@ -137,6 +137,7 @@ UNSTABLE_PRE_BUILD=asdf install bun latest && asdf global bun latest && bun i
 ### 故障排除
 
 如遇以下错误，请检查环境变量中是否存在空格等无关内容
+
 ```
 2024-06-07T02:24:04.979145Z	Using v2 root directory strategy
 2024-06-07T02:24:05.003931Z	Success: Finished cloning repository files
@@ -147,6 +148,7 @@ UNSTABLE_PRE_BUILD=asdf install bun latest && asdf global bun latest && bun i
 ```
 
 如错误提示为以下内容，请点击`重试部署`再次尝试：
+
 ```
 16:30:39.855	Using v2 root directory strategy
 16:30:39.881	Success: Finished cloning repository files
@@ -265,7 +267,7 @@ S3_ACCESS_HOST=https://image.xeu.life
 
 ```json
 {
-  "content": "消息内容"
+    "content": "消息内容"
 }
 ```
 
@@ -273,9 +275,7 @@ S3_ACCESS_HOST=https://image.xeu.life
 > 在所有环境变量调试完毕后可点击加密按钮加密环境变量（只保留 FRONTEND_URL 和 S3_FOLDER），这样下次部署时加密的环境变量就不会覆盖/删除了
 
 # 操作视频
+
 由于时间原因未对以下视频做剪辑与后期说明处理，如果对于部署流程不了解或疑惑可参考视频步骤
 
-
 https://github.com/openRin/Rin/assets/36541432/3ed98e93-2cc3-4e5f-a885-4d16a48500c3
-
-

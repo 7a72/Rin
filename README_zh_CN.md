@@ -2,7 +2,6 @@
 
 [English](./README.md) | 简体中文
 
-
 ![封面](https://repository-images.githubusercontent.com/803866357/958bc2c1-1703-4127-920c-853291495bdc)
 
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/openRin/Rin?style=for-the-badge)
@@ -19,8 +18,8 @@ Rin 是一个基于 Cloudflare Pages + Workers + D1 + R2 全家桶的博客，�
 
 [xeu.life](https://xeu.life)
 
-
 ## 特性
+
 1. 支持 Github OAuth 登录，默认第一个登录的用户拥有管理权限，其他用户均为普通用户
 2. 支持文章的写作与编辑
 3. 支持本地实时保存对任意文章的修改/编辑且多篇文章互不干扰
@@ -50,6 +49,7 @@ Rin 是一个基于 Cloudflare Pages + Workers + D1 + R2 全家桶的博客，�
 </a>
 
 # License
+
 ```
 MIT License
 
